@@ -1,15 +1,16 @@
+RGBLIGHT_ENABLE = yes
 VIA_ENABLE = yes
 LTO_ENABLE = yes
+
 VIAL_ENABLE = yes
 ENCODER_MAP_ENABLE = yes
-MOUSEKEY_ENABLE = yes
-COMBOS_ENABLE = yes
+TAP_DANCE_ENABLE = yes 
+GRAVE_ESC_ENABLE = yes
+SPACE_CADET_ENABLE = yes
 
 ifeq ($(strip $(MCU)), atmega32u4)
     QMK_SETTINGS = no
-    TAP_DANCE_ENABLE = no
+    
     KEY_OVERRIDE_ENABLE = no
-    GRAVE_ESC_ENABLE = no
-    SPACE_CADET_ENABLE = no
     MAGIC_ENABLE = no
 endif
