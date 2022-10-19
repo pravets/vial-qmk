@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "config_common.h"
 
 #define VENDOR_ID 0xFEED
-#define PRODUCT_ID 0x9336
+#define PRODUCT_ID 0x9339
 #define DEVICE_VER 0x0001
 #define MANUFACTURER Ergohaven
-#define PRODUCT    Dactyl Manuform 5x6
+#define PRODUCT Remnant
 
 #define VIAL_KEYBOARD_UID {0x1F, 0x07, 0x87, 0x74, 0xDF, 0x59, 0x8B, 0x59}
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
@@ -46,14 +46,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Serial settings */
 #define SERIAL_USART_FULL_DUPLEX
-#define SERIAL_USART_TX_PIN GP5
-#define SERIAL_USART_RX_PIN GP6
+#define SERIAL_USART_TX_PIN GP0
+#define SERIAL_USART_RX_PIN GP1
 #define WS2812_PIO_USE_PIO1
 
 /* RGB Defines */
 #define RGB_DI_PIN GP22
-#define DRIVER_LED_TOTAL 12
-#define RGBLED_NUM 12
+#define DRIVER_LED_TOTAL 58
+#define RGBLED_NUM 29
 #define RGBLIGHT_SPLIT
 #define RGBLIGHT_DEFAULT_MODE RGBLIGHT_MODE_RAINBOW_MOOD
 #define RGBLIGHT_SLEEP

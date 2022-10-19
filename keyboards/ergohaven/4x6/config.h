@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SERIAL_USART_FULL_DUPLEX
 #define SERIAL_USART_TX_PIN GP0
 #define SERIAL_USART_RX_PIN GP1
+#define WS2812_PIO_USE_PIO1
 
 /* RGB Defines */
 #define RGB_DI_PIN GP22
@@ -70,3 +71,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_EFFECT_SNAKE
 #define RGBLIGHT_EFFECT_STATIC_GRADIENT
 #define RGBLIGHT_EFFECT_TWINKLE
+
+#define SPLIT_USB_TIMEOUT 5000 
+#define SPLIT_USB_TIMEOUT_POLL 25
