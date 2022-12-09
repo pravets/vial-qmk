@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VIAL_KEYBOARD_UID {0x1F, 0x07, 0x87, 0x74, 0xDF, 0x59, 0x8B, 0x59}
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
 #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
+#define DYNAMIC_KEYMAP_LAYER_COUNT 17
 
 /* Key matrix size (rows are doubled-up) */
 #define MATRIX_ROWS 12
@@ -46,19 +47,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /* Serial settings */
 #define SERIAL_USART_FULL_DUPLEX
-#define SERIAL_USART_TX_PIN GP5
-#define SERIAL_USART_RX_PIN GP6
+#define SERIAL_USART_TX_PIN GP0
+#define SERIAL_USART_RX_PIN GP1
+#define SPLIT_HAND_PIN GP24
+#define USB_VBUS_PIN GP28
 #define WS2812_PIO_USE_PIO1
 
+#define BOOTMAGIC_LITE_ROW          0
+#define BOOTMAGIC_LITE_COLUMN       0
+#define BOOTMAGIC_LITE_ROW_RIGHT    6
+#define BOOTMAGIC_LITE_COLUMN_RIGHT 0
+
+#ifdef RGBLIGHT_ENABLE
 /* RGB Defines */
 #define RGB_DI_PIN GP22
-#define DRIVER_LED_TOTAL 12
-#define RGBLED_NUM 12
-#define RGBLIGHT_SPLIT
+#define RGBLIGHT_LED_MAP { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, \
+                        13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }
+#define RGBLED_NUM 24
+#define RGBLED_SPLIT { 12, 12 }
 #define RGBLIGHT_DEFAULT_MODE RGBLIGHT_MODE_RAINBOW_MOOD
 #define RGBLIGHT_SLEEP
 #define RGBLIGHT_LAYERS
-#define RGBLIGHT_LIMIT_VAL 150
+#define RGBLIGHT_DEFAULT_VAL 90
+#define RGBLIGHT_LIMIT_VAL 90
 
 /* RGB Effects */
 #define RGBLIGHT_EFFECT_ALTERNATING
@@ -71,3 +82,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_EFFECT_SNAKE
 #define RGBLIGHT_EFFECT_STATIC_GRADIENT
 #define RGBLIGHT_EFFECT_TWINKLE
+#endif
