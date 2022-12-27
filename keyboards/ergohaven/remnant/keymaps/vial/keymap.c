@@ -1,26 +1,24 @@
 #include QMK_KEYBOARD_H
 
 #define _QWERTY 0
-#define _COLEMAKDH 1
-#define _LOWER 2
-#define _RAISE 3
-#define _ADJUST 4
-#define _FIFTH 5
-#define _SIXTH 6
-#define _SEVENTH 7
-#define _EIGHTH 8
-#define _NINTH 9
-#define _TENTH 10
-#define _ELEVENTH 11
-#define _TWELTH 12
-#define _THIRTEENTH 13
-#define _FOURTEENTH 14
-#define _FIFTEENTH 15
-#define _SIXTEENTH 16
+#define _LOWER 1
+#define _RAISE 2
+#define _ADJUST 3
+#define _FIFTH 4
+#define _SIXTH 5
+#define _SEVENTH 6
+#define _EIGHTH 7
+#define _NINTH 8
+#define _TENTH 9
+#define _ELEVENTH 10
+#define _TWELTH 11
+#define _THIRTEENTH 12
+#define _FOURTEENTH 13
+#define _FIFTEENTH 14
+#define _SIXTEENTH 15
 
 
 #define QWERTY    DF(_QWERTY)
-#define COLEMAKDH DF(_COLEMAKDH)
 #define RAISE     MO(_RAISE)
 #define LOWER     MO(_LOWER)
 #define ADJUST    MO(_ADJUST)
@@ -36,15 +34,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                         KC_LGUI, KC_BSPC,                                                  KC_LBRC, KC_RBRC,
                                    KC_LCTL, LOWER, KC_SPC,             KC_ENT, RAISE, KC_RALT
       ),
- 
-      [_COLEMAKDH] = LAYOUT_5x6(
-        _______, _______, _______, _______, _______, _______,                 _______, _______, _______, _______, _______, _______,
-        _______, KC_Q,    KC_W,    KC_F,    KC_P,    KC_B,                    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, _______,
-        _______, KC_A,    KC_R,    KC_S,    KC_T,    KC_G,                    KC_M,    KC_N,    KC_E,    KC_I,    KC_O,    _______,
-        _______, KC_Z,    KC_X,    KC_C,    KC_D,    KC_V,                    KC_K,    KC_H,    KC_COMM, KC_DOT,  KC_SLSH, _______,
-                          _______, _______,                                                     _______, _______,                  
-                                         _______, _______, _______,       _______, _______,  _______                          
-       ),   
 
       [_LOWER] = LAYOUT_5x6(
     
@@ -68,10 +57,52 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     
       [_ADJUST] = LAYOUT_5x6(
         _______, _______, _______, _______, _______, _______,                 UC_RMOD, UC_MOD, _______, _______, _______, _______,
-        _______, _______, _______, _______, QWERTY,  COLEMAKDH,               _______, _______, _______, _______, DM_PLY1, DM_REC1,
+        _______, _______, _______, _______, _______, _______,                 _______, _______, _______, _______, DM_PLY1, DM_REC1,
         RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, _______, _______,                 _______, KC_VOLD, KC_MUTE, KC_VOLU, DM_PLY2, DM_REC2,
         RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, _______, CG_TOGG,                 _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, DM_RSTP,
                           _______, _______,                                                     _______, _______,                  
                                          _______, _______, _______,       _______, _______,  _______                          
        ),
 };
+
+/* void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) { */
+/*     for (uint8_t i = led_min; i <= led_max; i++) { */
+/*         switch(get_highest_layer(layer_state|default_layer_state)) { */
+/*             case 3: */
+/*                 rgb_matrix_sethsv_noeeprom(HSV_BLUE); */
+/*                 break; */
+/*             case 2: */
+/*                 rgb_matrix_sethsv_noeeprom(HSV_BLUE); */
+/*                 break; */
+/*             case 1: */
+/*                 rgb_matrix_sethsv_noeeprom(HSV_RED); */
+/*                 break; */
+/*             default: */
+/*                 rgb_matrix_sethsv_noeeprom(HSV_OFF); */
+/*                 break; */
+/*         } */
+/*     } */
+/* } */
+
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+ HSV hsv = {0, 255, 255};
+    if (hsv.v > rgb_matrix_get_val()) {
+        hsv.v = rgb_matrix_get_val();
+    }
+
+    RGB rgb = hsv_to_rgb(hsv);
+    if (get_highest_layer(layer_state) > 0) {
+        uint8_t layer = get_highest_layer(layer_state);
+
+        for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+            for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+                uint8_t index = g_led_config.matrix_co[row][col];
+
+                if (index >= led_min && index <= led_max && index != NO_LED &&
+                keymap_key_to_keycode(layer, (keypos_t){col,row}) > KC_TRNS) {
+                    rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b);
+                }
+            }
+        }
+    }
+}
