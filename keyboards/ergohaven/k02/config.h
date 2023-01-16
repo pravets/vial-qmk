@@ -24,16 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
 #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
 #define DYNAMIC_KEYMAP_LAYER_COUNT 17
-
-/* Key matrix size (rows are doubled-up) */
-/* #define MATRIX_ROWS 12 */
-/* #define MATRIX_COLS 6 */
-
-/* Wiring of each half */
-/* #define MATRIX_COL_PINS { GP15, GP14, GP13, GP12, GP11, GP10 } */
-/* #define MATRIX_ROW_PINS { GP16, GP17, GP18, GP19, GP20, GP21 } */
-
-/* #define DIODE_DIRECTION COL2ROW */
+#define DYNAMIC_KEYMAP_MACRO_COUNT 32
 
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET // Activates the double-tap behavior
 #define RP2040_BOOTLOADER_DOUBLE_TAP_RESET_TIMEOUT 200U // Timeout window in ms in which the double tap can occur.
@@ -56,17 +47,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SPLIT_LAYER_STATE_ENABLE
 #define SPLIT_WPM_ENABLE
 #define SPLIT_MODS_ENABLE
-//#define OLED_FONT_H "keyboards/mlego/m65/lib/glcdfont.c"
 #endif
 
 #define RGBLED_NUM 58
 #define RGB_DI_PIN GP22
-//#define WS2812_PIO_USE_PIO1
 
 #define BOOTMAGIC_LITE_ROW          0
 #define BOOTMAGIC_LITE_COLUMN       0
-#define BOOTMAGIC_LITE_ROW_RIGHT    6
-#define BOOTMAGIC_LITE_COLUMN_RIGHT 0
+#define BOOTMAGIC_LITE_ROW_RIGHT    5
+#define BOOTMAGIC_LITE_COLUMN_RIGHT 5
 
 #define UNICODE_SELECTED_MODES UC_WIN, UC_WINC, UC_MAC, UC_LNX 
 
