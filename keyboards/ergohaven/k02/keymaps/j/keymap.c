@@ -87,6 +87,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static void print_status_narrow(void) {
     // Print current mode
+    oled_write_P(PSTR("\n"), false);
+    oled_write_ln_P(PSTR("K:02\n"), false);
     oled_write_P(PSTR("\n\n"), false);
     oled_write_ln_P(PSTR("MODE\n"), false);
     oled_write_ln_P(PSTR(""), false);
@@ -96,7 +98,7 @@ static void print_status_narrow(void) {
         oled_write_ln_P(PSTR("Win"), false);
     }
 
-    oled_write_P(PSTR("\n\n"), false);
+    oled_write_P(PSTR("\n\n\n"), false);
     // Print current layer
     oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {

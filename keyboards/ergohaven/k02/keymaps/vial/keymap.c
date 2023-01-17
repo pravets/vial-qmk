@@ -7,18 +7,19 @@ char wpm_str[4];
 #define _LOWER 1
 #define _RAISE 2
 #define _ADJUST 3
-#define _FIFTH 4
-#define _SIXTH 5
-#define _SEVENTH 6
-#define _EIGHTH 7
-#define _NINTH 8
-#define _TENTH 9
-#define _ELEVENTH 10
-#define _TWELTH 11
-#define _THIRTEENTH 12
-#define _FOURTEENTH 13
-#define _FIFTEENTH 14
-#define _SIXTEENTH 15
+#define _FOUR 4
+#define _FIVE 5
+#define _SIX 6
+#define _SEVEN 7
+#define _EIGHT 8
+#define _NINE 9
+#define _TEN 10
+#define _ELEVEN 11
+#define _TWELVE 12
+#define _THIRTEEN 13
+#define _FOURTEEN 14
+#define _FIFTEEN 15
+#define _SIXTEEN 16
 
 enum custom_keycodes {
     KC_QWERTY = SAFE_RANGE,
@@ -73,6 +74,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 static void print_status_narrow(void) {
     // Print current mode
+    oled_write_P(PSTR("\n"), false);
+    oled_write_ln_P(PSTR("K:02\n"), false);
     oled_write_P(PSTR("\n\n"), false);
     oled_write_ln_P(PSTR("MODE\n"), false);
     oled_write_ln_P(PSTR(""), false);
@@ -82,7 +85,7 @@ static void print_status_narrow(void) {
         oled_write_ln_P(PSTR("Win"), false);
     }
 
-    oled_write_P(PSTR("\n\n"), false);
+    oled_write_P(PSTR("\n\n\n"), false);
     // Print current layer
     oled_write_ln_P(PSTR("LAYER"), false);
     switch (get_highest_layer(layer_state)) {
@@ -97,6 +100,45 @@ static void print_status_narrow(void) {
             break;
         case _ADJUST:
             oled_write_P(PSTR("Adj\n"), false);
+            break;
+        case _FOUR:
+            oled_write_P(PSTR("Four\n"), false);
+            break;
+        case _FIVE:
+            oled_write_P(PSTR("Five\n"), false);
+            break;
+        case _SIX:
+            oled_write_P(PSTR("Six\n"), false);
+            break;
+        case _SEVEN:
+            oled_write_P(PSTR("Seven"), false);
+            break;
+        case _EIGHT:
+            oled_write_P(PSTR("Eight"), false);
+            break;
+        case _NINE:
+            oled_write_P(PSTR("Nine\n"), false);
+            break;
+         case _TEN:
+            oled_write_P(PSTR("Ten\n"), false);
+            break;
+         case _ELEVEN:
+            oled_write_P(PSTR("Elevn"), false);
+            break;
+         case _TWELVE:
+            oled_write_P(PSTR("Twlve"), false);
+            break;
+         case _THIRTEEN:
+            oled_write_P(PSTR("Thrtn"), false);
+            break;
+         case _FOURTEEN:
+            oled_write_P(PSTR("Frtn\n"), false);
+            break;
+         case _FIFTEEN:
+            oled_write_P(PSTR("Fiftn"), false);
+            break;
+         case _SIXTEEN:
+            oled_write_P(PSTR("Sixtn"), false);
             break;
         default:
             oled_write_ln_P(PSTR("Undef"), false);
@@ -129,8 +171,6 @@ uint32_t anim_sleep = 0;
 uint8_t current_idle_frame = 0;
 // uint8_t current_prep_frame = 0; // uncomment if PREP_FRAMES >1
 uint8_t current_tap_frame = 0;
-
-
 
 // Implementation credit j-inc(/James Incandenza), pixelbenny, and obosob.
 // Bongo cat images changed and adapted for sofle keyboard oled size.
@@ -235,7 +275,7 @@ static void render_anim(void) {
         anim_sleep = timer_read32();
     } else {
         if(timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
-//            oled_off();
+            /* oled_off(); */
         } else {
             if(timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
                 anim_timer = timer_read32();
