@@ -293,158 +293,28 @@ bool oled_task_user(void) {
 
 #endif
 
-/* bool process_record_user(uint16_t keycode, keyrecord_t *record) { */
-/*     switch (keycode) { */
-/*         case KC_QWERTY: */
-/*             if (record->event.pressed) { */
-/*                 set_single_persistent_default_layer(_QWERTY); */
-/*             } */
-/*             return false; */
-/*         case KC_LOWER: */
-/*             if (record->event.pressed) { */
-/*                 layer_on(_LOWER); */
-/*                 update_tri_layer(_LOWER, _RAISE, _ADJUST); */
-/*             } else { */
-/*                 layer_off(_LOWER); */
-/*                 update_tri_layer(_LOWER, _RAISE, _ADJUST); */
-/*             } */
-/*             return false; */
-/*         case KC_RAISE: */
-/*             if (record->event.pressed) { */
-/*                 layer_on(_RAISE); */
-/*                 update_tri_layer(_LOWER, _RAISE, _ADJUST); */
-/*             } else { */
-/*                 layer_off(_RAISE); */
-/*                 update_tri_layer(_LOWER, _RAISE, _ADJUST); */
-/*             } */
-/*             return false; */
-/*         case KC_ADJUST: */
-/*             if (record->event.pressed) { */
-/*                 layer_on(_ADJUST); */
-/*             } else { */
-/*                 layer_off(_ADJUST); */
-/*             } */
-/*             return false; */
-/*         case KC_PRVWD: */
-/*             if (record->event.pressed) { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     register_mods(mod_config(MOD_LALT)); */
-/*                     register_code(KC_LEFT); */
-/*                 } else { */
-/*                     register_mods(mod_config(MOD_LCTL)); */
-/*                     register_code(KC_LEFT); */
-/*                 } */
-/*             } else { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     unregister_mods(mod_config(MOD_LALT)); */
-/*                     unregister_code(KC_LEFT); */
-/*                 } else { */
-/*                     unregister_mods(mod_config(MOD_LCTL)); */
-/*                     unregister_code(KC_LEFT); */
-/*                 } */
-/*             } */
-/*             break; */
-/*         case KC_NXTWD: */
-/*              if (record->event.pressed) { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     register_mods(mod_config(MOD_LALT)); */
-/*                     register_code(KC_RIGHT); */
-/*                 } else { */
-/*                     register_mods(mod_config(MOD_LCTL)); */
-/*                     register_code(KC_RIGHT); */
-/*                 } */
-/*             } else { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     unregister_mods(mod_config(MOD_LALT)); */
-/*                     unregister_code(KC_RIGHT); */
-/*                 } else { */
-/*                     unregister_mods(mod_config(MOD_LCTL)); */
-/*                     unregister_code(KC_RIGHT); */
-/*                 } */
-/*             } */
-/*             break; */
-/*         case KC_LSTRT: */
-/*             if (record->event.pressed) { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                      //CMD-arrow on Mac, but we have CTL and GUI swapped */
-/*                     register_mods(mod_config(MOD_LCTL)); */
-/*                     register_code(KC_LEFT); */
-/*                 } else { */
-/*                     register_code(KC_HOME); */
-/*                 } */
-/*             } else { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     unregister_mods(mod_config(MOD_LCTL)); */
-/*                     unregister_code(KC_LEFT); */
-/*                 } else { */
-/*                     unregister_code(KC_HOME); */
-/*                 } */
-/*             } */
-/*             break; */
-/*         case KC_LEND: */
-/*             if (record->event.pressed) { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     //CMD-arrow on Mac, but we have CTL and GUI swapped */
-/*                     register_mods(mod_config(MOD_LCTL)); */
-/*                     register_code(KC_RIGHT); */
-/*                 } else { */
-/*                     register_code(KC_END); */
-/*                 } */
-/*             } else { */
-/*                 if (keymap_config.swap_lctl_lgui) { */
-/*                     unregister_mods(mod_config(MOD_LCTL)); */
-/*                     unregister_code(KC_RIGHT); */
-/*                 } else { */
-/*                     unregister_code(KC_END); */
-/*                 } */
-/*             } */
-/*             break; */
-/*         case KC_DLINE: */
-/*             if (record->event.pressed) { */
-/*                 register_mods(mod_config(MOD_LCTL)); */
-/*                 register_code(KC_BSPC); */
-/*             } else { */
-/*                 unregister_mods(mod_config(MOD_LCTL)); */
-/*                 unregister_code(KC_BSPC); */
-/*             } */
-/*             break; */
-/*         case KC_COPY: */
-/*             if (record->event.pressed) { */
-/*                 register_mods(mod_config(MOD_LCTL)); */
-/*                 register_code(KC_C); */
-/*             } else { */
-/*                 unregister_mods(mod_config(MOD_LCTL)); */
-/*                 unregister_code(KC_C); */
-/*             } */
-/*             return false; */
-/*         case KC_PASTE: */
-/*             if (record->event.pressed) { */
-/*                 register_mods(mod_config(MOD_LCTL)); */
-/*                 register_code(KC_V); */
-/*             } else { */
-/*                 unregister_mods(mod_config(MOD_LCTL)); */
-/*                 unregister_code(KC_V); */
-/*             } */
-/*             return false; */
-/*         case KC_CUT: */
-/*             if (record->event.pressed) { */
-/*                 register_mods(mod_config(MOD_LCTL)); */
-/*                 register_code(KC_X); */
-/*             } else { */
-/*                 unregister_mods(mod_config(MOD_LCTL)); */
-/*                 unregister_code(KC_X); */
-/*             } */
-/*             return false; */
-/*             break; */
-/*         case KC_UNDO: */
-/*             if (record->event.pressed) { */
-/*                 register_mods(mod_config(MOD_LCTL)); */
-/*                 register_code(KC_Z); */
-/*             } else { */
-/*                 unregister_mods(mod_config(MOD_LCTL)); */
-/*                 unregister_code(KC_Z); */
-/*             } */
-/*             return false; */
-/*     } */
-/*     return true; */
-/* } */
+/* change led based on layers */
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    HSV hsv = {0, 0, RGB_MATRIX_MAXIMUM_BRIGHTNESS};
+
+    if (hsv.v > rgb_matrix_get_val()) {
+        hsv.v = rgb_matrix_get_val();
+    }
+    RGB rgb = hsv_to_rgb(hsv);
+
+    if (get_highest_layer(layer_state) > 0) {
+        uint8_t layer = get_highest_layer(layer_state);
+
+        for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+            for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+                uint8_t index = g_led_config.matrix_co[row][col];
+
+                if (index >= led_min && index <= led_max && index != NO_LED &&
+                keymap_key_to_keycode(layer, (keypos_t){col,row}) > KC_TRNS) {
+                    rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b); // last three values are R, G, B
+                }
+            }
+        }
+    }
+}
+

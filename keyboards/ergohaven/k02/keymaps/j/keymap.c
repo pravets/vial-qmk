@@ -34,52 +34,40 @@ char wpm_str[4];
 #define APP_C   LSG(KC_C)
 #define APP_V   LSG(KC_V)
 
-enum custom_keycodes {
-    KC_QWERTY = SAFE_RANGE,
-    KC_LOWER,
-    KC_RAISE,
-    KC_ADJUST,
-    KC_PRVWD,
-    KC_NXTWD,
-    KC_LSTRT,
-    KC_LEND,
-    KC_DLINE
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       [_QWERTY] = LAYOUT_all(
-         KC_F1,   KC_F2, KC_F3, KC_F4, KC_F5, KC_F6,                          KC_F7, KC_F8, KC_F9,   KC_F10, KC_F11,  KC_F12,
-         KC_TAB,  KC_Q,  KC_W,  KC_E,  KC_R,  KC_T,                           KC_Y,  KC_U,  KC_I,    KC_O,   KC_P,    KC_GRV,
-         KC_LALT, KC_A,  KC_S,  KC_D,  KC_F,  KC_G,                           KC_H,  KC_J,  KC_K,    KC_L,   KC_SCLN, KC_ENT,
-         KC_ESC,  KC_Z,  KC_X,  KC_C,  KC_V,  KC_B,                           KC_N,  KC_M,  KC_COMM, KC_DOT, KC_QUOT, KC_MPLY,
-                         KC_VOLD, KC_VOLU, KC_LCTL, LOWER, KC_SPC,      KC_BSPC, RAISE, KC_RSFT, KC_LBRC, KC_RBRC 
+         KC_F1,   KC_F2, KC_F3,   KC_F4,   KC_F5,   KC_F6,                               KC_F7, KC_F8,   KC_F9,   KC_F10, KC_F11,  KC_F12,
+         KC_TAB,  KC_Q,  KC_W,    KC_E,    KC_R,    KC_T,                                KC_Y,  KC_U,    KC_I,    KC_O,   KC_P,    KC_GRV,
+         KC_LALT, KC_A,  KC_S,    KC_D,    KC_F,    KC_G,                                KC_H,  KC_J,    KC_K,    KC_L,   KC_SCLN, KC_ENT,
+         KC_ESC,  KC_Z,  KC_X,    KC_C,    KC_V,    KC_B,                                KC_N,  KC_M,    KC_COMM, KC_DOT, KC_QUOT, KC_MPLY,
+                         KC_VOLD, KC_VOLU, KC_LCTL, LOWER, KC_SPC,              KC_BSPC, RAISE, KC_RSFT, KC_LBRC, KC_RBRC 
                                                
       ),
     
       [_LOWER] = LAYOUT_all(
     
-         QK_BOOT, _______, _______, _______, _______, _______,            _______, _______, _______, _______, _______,  _______,
-         _______, KC_3,    KC_2,    KC_1,    KC_0,    KC_4,               KC_7,    KC_6,    KC_5,    KC_9,    KC_8,     _______,
-         KC_LSFT, APP_A,   APP_S,   APP_D,   APP_F,   KC_ENT,             KC_CAPS, KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, _______,
-         QK_RBT,  _______, APP_X,   APP_C,   APP_V,   KC_DEL,             KC_PSCR, PREVWRD, KC_PGDN, KC_PGUP, NEXTWRD,  _______,
-                       _______, _______, _______, _______, _______,    _______, ADJUST,  _______, _______, _______ 
+         QK_BOOT, _______, _______, _______, _______, _______,                           _______, _______, _______, _______, _______,  _______,
+         _______, KC_3,    KC_2,    KC_1,    KC_0,    KC_4,                              KC_7,    KC_6,    KC_5,    KC_9,    KC_8,     _______,
+         KC_LSFT, APP_A,   APP_S,   APP_D,   APP_F,   KC_ENT,                            KC_CAPS, KC_LEFT, KC_DOWN, KC_UP,   KC_RIGHT, _______,
+         QK_RBT,  _______, APP_X,   APP_C,   APP_V,   KC_DEL,                            KC_PSCR, PREVWRD, KC_PGDN, KC_PGUP, NEXTWRD,  _______,
+                           _______, _______, _______, _______, _______,         _______, ADJUST,  _______, _______, _______ 
     
       ),
     
       [_RAISE] = LAYOUT_all(
-         _______, _______, KC_AT,   KC_DLR,  KC_HASH, _______,             _______,  _______, KC_CIRC, _______, _______,  QK_BOOT,
-         _______, _______, KC_LT,   KC_EQL,  KC_GT,   _______,              _______, KC_LBRC, KC_UNDS, KC_RBRC, KC_QUES,  _______,
-         _______, KC_BSLS, KC_LPRN, KC_MINS, KC_RPRN, KC_PLUS,             KC_PERC,  KC_LCBR, KC_SCLN, KC_RCBR, KC_EXLM,  _______,
-         _______, _______, KC_ASTR, KC_COLN, KC_SLSH, UC(0x2013),          _______,  KC_PIPE, KC_TILD, KC_AMPR, _______,  QK_RBT,
-                           UC(0x00AB), UC(0x00BB), _______, ADJUST, _______, _______, _______, _______, _______, _______ 
+         _______, _______, KC_AT,   KC_DLR,  KC_HASH, _______,                           _______,  _______, KC_CIRC, _______, _______,  QK_BOOT,
+         _______, _______, KC_LT,   KC_EQL,  KC_GT,   _______,                           _______, KC_LBRC, KC_UNDS, KC_RBRC, KC_QUES,  _______,
+         _______, KC_BSLS, KC_LPRN, KC_MINS, KC_RPRN, KC_PLUS,                           KC_PERC,  KC_LCBR, KC_SCLN, KC_RCBR, KC_EXLM,  _______,
+         _______, _______, KC_ASTR, KC_COLN, KC_SLSH, _______,                           _______,  KC_PIPE, KC_TILD, KC_AMPR, _______,  QK_RBT,
+                           _______, _______, _______, ADJUST,  _______,         _______, _______, _______, _______, _______ 
       ),
     
       [_ADJUST] = LAYOUT_all(
-        _______, _______, _______, _______, _______, _______,              _______, _______, _______, _______, _______, _______,
-        _______, _______, _______, _______, _______, _______,              _______, _______, _______, _______, _______, _______,
-        RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, _______, _______,              _______, KC_VOLD, KC_MUTE, KC_VOLU, _______, _______,
-        RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, _______, _______,              _______, KC_MPRV, KC_MPLY, KC_MNXT, _______, _______,
-                          _______, _______, _______, _______, _______,     _______, _______, _______,  _______, _______                            
+        _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+        _______, _______, _______, _______, _______, _______,                            _______, _______, _______, _______, _______, _______,
+        RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, _______, _______,                            _______, KC_MPRV, _______, _______, KC_MNXT, _______,
+        RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, _______, _______,                            _______, _______, _______, _______, _______, _______,
+                          _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______                            
        ),
 };
 
@@ -112,7 +100,7 @@ static void print_status_narrow(void) {
             oled_write_P(PSTR("Lower"), false);
             break;
         case _ADJUST:
-            oled_write_P(PSTR("Adj\n"), false);
+            oled_write_P(PSTR("Adjst"), false);
             break;
         case _FOUR:
             oled_write_P(PSTR("Four\n"), false);
@@ -311,158 +299,27 @@ bool oled_task_user(void) {
 
 #endif
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case KC_QWERTY:
-            if (record->event.pressed) {
-                set_single_persistent_default_layer(_QWERTY);
-            }
-            return false;
-        case KC_LOWER:
-            if (record->event.pressed) {
-                layer_on(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_LOWER);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-        case KC_RAISE:
-            if (record->event.pressed) {
-                layer_on(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            } else {
-                layer_off(_RAISE);
-                update_tri_layer(_LOWER, _RAISE, _ADJUST);
-            }
-            return false;
-        case KC_ADJUST:
-            if (record->event.pressed) {
-                layer_on(_ADJUST);
-            } else {
-                layer_off(_ADJUST);
-            }
-            return false;
-        case KC_PRVWD:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
-                    register_code(KC_LEFT);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_LEFT);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_LEFT);
-                }
-            }
-            break;
-        case KC_NXTWD:
-             if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    register_mods(mod_config(MOD_LALT));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_RIGHT);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LALT));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_RIGHT);
-                }
-            }
-            break;
-        case KC_LSTRT:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                     //CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_LEFT);
-                } else {
-                    register_code(KC_HOME);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_LEFT);
-                } else {
-                    unregister_code(KC_HOME);
-                }
-            }
-            break;
-        case KC_LEND:
-            if (record->event.pressed) {
-                if (keymap_config.swap_lctl_lgui) {
-                    //CMD-arrow on Mac, but we have CTL and GUI swapped
-                    register_mods(mod_config(MOD_LCTL));
-                    register_code(KC_RIGHT);
-                } else {
-                    register_code(KC_END);
-                }
-            } else {
-                if (keymap_config.swap_lctl_lgui) {
-                    unregister_mods(mod_config(MOD_LCTL));
-                    unregister_code(KC_RIGHT);
-                } else {
-                    unregister_code(KC_END);
-                }
-            }
-            break;
-        case KC_DLINE:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_BSPC);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_BSPC);
-            }
-            break;
-        case KC_COPY:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_C);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_C);
-            }
-            return false;
-        case KC_PASTE:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_V);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_V);
-            }
-            return false;
-        case KC_CUT:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_X);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_X);
-            }
-            return false;
-            break;
-        case KC_UNDO:
-            if (record->event.pressed) {
-                register_mods(mod_config(MOD_LCTL));
-                register_code(KC_Z);
-            } else {
-                unregister_mods(mod_config(MOD_LCTL));
-                unregister_code(KC_Z);
-            }
-            return false;
+/* change led based on layers */
+void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    HSV hsv = {0, 0, RGB_MATRIX_MAXIMUM_BRIGHTNESS};
+
+    if (hsv.v > rgb_matrix_get_val()) {
+        hsv.v = rgb_matrix_get_val();
     }
-    return true;
+    RGB rgb = hsv_to_rgb(hsv);
+
+    if (get_highest_layer(layer_state) > 0) {
+        uint8_t layer = get_highest_layer(layer_state);
+
+        for (uint8_t row = 0; row < MATRIX_ROWS; ++row) {
+            for (uint8_t col = 0; col < MATRIX_COLS; ++col) {
+                uint8_t index = g_led_config.matrix_co[row][col];
+
+                if (index >= led_min && index <= led_max && index != NO_LED &&
+                keymap_key_to_keycode(layer, (keypos_t){col,row}) > KC_TRNS) {
+                    rgb_matrix_set_color(index, rgb.r, rgb.g, rgb.b); // last three values are R, G, B
+                }
+            }
+        }
+    }
 }
