@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef RGB_MATRIX_ENABLE
 #define DRIVER_LED_TOTAL 58
 #define RGB_MATRIX_SPLIT { 29, 29 }
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 70
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 50
 #define RGB_MATRIX_HUE_STEP 10
 #define RGB_MATRIX_SAT_STEP 10
 #define RGB_MATRIX_VAL_STEP 10
@@ -70,7 +70,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGB_MATRIX_FRAMEBUFFER_EFFECTS
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_DISABLE_WHEN_USB_SUSPENDED
-#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_JELLYBEAN_RAINDROPS
+#define RGB_MATRIX_STARTUP_MODE RGB_MATRIX_SPLASH
 
 // effects
 #define ENABLE_RGB_MATRIX_ALPHAS_MODS
