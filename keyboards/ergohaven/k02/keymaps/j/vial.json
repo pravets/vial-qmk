@@ -7,6 +7,16 @@
         "rows": 10,
         "cols": 6
     },
+    "customKeycodes": [
+        {"name": "RU_A",
+         "title": "A (Cyrillic)",
+         "shortName": "RU_A"
+        },
+	{"name": "Linux Unicode",
+	 "title": "NICE",
+	 "shortName": "UNIC_LIN"
+	}
+    ],
     "layouts": {
         "keymap":[
             [{"c":"#aaaaaa","x":3},"0,3",{"x":7.25},"5,2"],

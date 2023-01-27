@@ -45,12 +45,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define BOOTMAGIC_LITE_ROW_RIGHT    6
 #define BOOTMAGIC_LITE_COLUMN_RIGHT 0
 
-#define UNICODE_SELECTED_MODES UC_WIN, UC_WINC, UC_MAC, UC_LNX 
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
+#define DOUBLE_TAP_SHIFT_TURNS_ON_CAPS_WORD
 
 #ifdef RGB_MATRIX_ENABLE
 #define DRIVER_LED_TOTAL 58
 #define RGB_MATRIX_SPLIT { 29, 29 }
 #define SPLIT_LAYER_STATE_ENABLE
+#define SPLIT_TRANSPORT_MIRROR
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 50 // limits maximum brightness of LEDs to 150 out of 255. Higher may cause the controller to crash.
 #define RGB_MATRIX_STARTUP_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS
 #define RGB_MATRIX_HUE_STEP 10
