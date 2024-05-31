@@ -134,6 +134,13 @@ void render_status_modern(void) {
     }
 }
 
+void render_big_num(int num, char* c0, char* c1, char* c2, char* c3) {
+    *c0 = 0x80 + num * 2;
+    *c1 = 0x81 + num * 2;
+    *c2 = 0xa0 + num * 2;
+    *c3 = 0xa1 + num * 2;
+}
+
 void render_status_minimalistic(void) {
     oled_clear();
     int layer = get_highest_layer(layer_state);
@@ -183,9 +190,21 @@ void render_status_minimalistic(void) {
 
     struct hid_data_t* hid_data = get_hid_data();
     if (hid_data->time_changed) {
-        sprintf(buf, "%02d:%02d", hid_data->hours, hid_data->minutes);
-        oled_set_cursor(0, 11);
-        oled_write_ln(buf, false);
+        if (0) {
+            sprintf(buf, "%02d:%02d", hid_data->hours, hid_data->minutes);
+            oled_set_cursor(0, 11);
+            oled_write_ln(buf, false);
+        } else {
+            char buf[21] = "                    ";
+            render_big_num(hid_data->hours / 10, buf + 0, buf + 1, buf + 5, buf + 6);
+            render_big_num(hid_data->hours % 10, buf + 2, buf + 3, buf + 7, buf + 8);
+            render_big_num(hid_data->minutes / 10, buf + 10, buf + 11, buf + 15, buf + 16);
+            render_big_num(hid_data->minutes % 10, buf + 12, buf + 13, buf + 17, buf + 18);
+            buf[4] = 0x94;
+            buf[9] = 0xb4;
+            oled_set_cursor(0, 11);
+            oled_write(buf, false);
+        }
     }
 }
 
