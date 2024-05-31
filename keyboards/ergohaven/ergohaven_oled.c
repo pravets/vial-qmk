@@ -188,20 +188,35 @@ void render_status_minimalistic(void) {
     oled_set_cursor(0, 9);
     oled_write_ln(buf, false);
 
-    struct hid_data_t* hid_data = get_hid_data();
-    if (hid_data->time_changed) {
+    struct hid_data_t* hid_data    = get_hid_data();
+    static bool        clock       = false;
+    static uint32_t    clock_start = 0;
+    if (hid_data->time_changed || clock) {
+        clock = true;
+        if (hid_data->time_changed) clock_start = sync_timer_read32();
+        hid_data->time_changed = false;
+
+        uint32_t seconds = sync_timer_elapsed32(clock_start) / 1000;
+        sprintf(buf, "%lu", seconds);
+        oled_set_cursor(0, 9);
+        oled_write_ln(buf, false);
+
         if (0) {
             sprintf(buf, "%02d:%02d", hid_data->hours, hid_data->minutes);
             oled_set_cursor(0, 11);
             oled_write_ln(buf, false);
         } else {
-            char buf[21] = "                    ";
+            char buf[26] = "                         ";
             render_big_num(hid_data->hours / 10, buf + 0, buf + 1, buf + 5, buf + 6);
             render_big_num(hid_data->hours % 10, buf + 2, buf + 3, buf + 7, buf + 8);
-            render_big_num(hid_data->minutes / 10, buf + 10, buf + 11, buf + 15, buf + 16);
-            render_big_num(hid_data->minutes % 10, buf + 12, buf + 13, buf + 17, buf + 18);
-            buf[4] = 0x94;
-            buf[9] = 0xb4;
+            render_big_num(hid_data->minutes / 10, buf + 15, buf + 16, buf + 20, buf + 21);
+            render_big_num(hid_data->minutes % 10, buf + 17, buf + 18, buf + 22, buf + 23);
+            if (seconds & 1) {
+                buf[10] = 0x96;
+                buf[11] = 0x97;
+                buf[12] = 0x96;
+                buf[13] = 0x97;
+            }
             oled_set_cursor(0, 11);
             oled_write(buf, false);
         }
