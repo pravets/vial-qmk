@@ -6,8 +6,6 @@ BOOTLOADER = rp2040
 
 # Build Options
 ENCODER_ENABLE = yes
-OLED_ENABLE = yes
-OLED_DRIVER = ssd1306
 
 NKRO_ENABLE = yes
 BOOTMAGIC_ENABLE = yes
