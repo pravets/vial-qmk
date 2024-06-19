@@ -21,7 +21,18 @@ CAPS_WORD_ENABLE = yes
 REPEAT_KEY_ENABLE = yes
 AUTO_SHIFT_ENABLE = yes
 
+SERIAL_DRIVER = vendor
+
+OPT_DEFS = -O2
+QUANTUM_PAINTER_ENABLE = yes
+QUANTUM_PAINTER_DRIVERS += st7789_spi
+QUANTUM_PAINTER_LVGL_INTEGRATION = yes
+RGBLIGHT_ENABLE = no
+RAW_ENABLE = yes
+
 SRC += keyboards/ergohaven/ergohaven_rgb.c
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c
 SRC += keyboards/ergohaven/hid.c
+SRC += lvgl_helpers.c
+SRC += display.c

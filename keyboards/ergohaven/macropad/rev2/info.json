@@ -5,7 +5,7 @@
     "maintainer": "Ergohaven",
     "usb": {
         "vid": "0xE126",
-        "pid": "0x0040",
+        "pid": "0x0041",
         "device_version": "1.0.0"
     },
     "encoder": {
