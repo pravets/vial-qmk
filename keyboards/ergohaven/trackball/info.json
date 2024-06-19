@@ -8,6 +8,14 @@
         "pid": "0x0138",
         "device_version": "1.0.0"
     },
+    "encoder": {
+        "rotary": [
+            {"pin_a": "GP27", "pin_b": "GP28"}
+        ]
+    },
+    "bootmagic": {
+        "matrix": [1, 0]
+    },
     "processor": "RP2040",
     "bootloader": "rp2040",
     "matrix_pins": {
