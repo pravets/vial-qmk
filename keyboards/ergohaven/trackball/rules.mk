@@ -4,5 +4,3 @@ BOOTLOADER = rp2040
 
 POINTING_DEVICE_ENABLE = yes
 POINTING_DEVICE_DRIVER = adns9800
-
-SRC += keyboards/ergohaven/ergohaven.c
