@@ -25,14 +25,9 @@ static lv_obj_t *screen_media;
 /* home screen content */
 static lv_obj_t *label_time;
 static lv_obj_t *label_volume_home;
-static lv_obj_t *label_shift;
-static lv_obj_t *label_ctrl;
-static lv_obj_t *label_alt;
-static lv_obj_t *label_gui;
 static lv_obj_t *label_layer;
 static lv_obj_t *label_caps;
 static lv_obj_t *label_num;
-static lv_obj_t *label_layout;
 static lv_obj_t *label_version;
 
 /* volume screen content */
@@ -86,32 +81,23 @@ void init_screen_home(void) {
 
     label_time = lv_label_create(screen_home);
     lv_label_set_text(label_time, "Macropad");
-    lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_time, &lv_font_montserrat_40, LV_PART_MAIN);
+
+    label_layer = lv_label_create(screen_home);
+    lv_label_set_text(label_layer, "");
+    lv_obj_set_style_text_font(label_layer, &lv_font_montserrat_40, LV_PART_MAIN);
+    display_process_layer_state(0);
 
     lv_obj_t *mods = lv_obj_create(screen_home);
     lv_obj_add_style(mods, &style_container, 0);
     use_flex_row(mods);
 
-    label_gui   = create_button(mods, "GUI", &style_button, &style_button_active);
-    label_alt   = create_button(mods, "ALT", &style_button, &style_button_active);
-    label_ctrl  = create_button(mods, "CTL", &style_button, &style_button_active);
-    label_shift = create_button(mods, "SFT", &style_button, &style_button_active);
-
     label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
-    label_num = create_button(mods, "NUM", &style_button, &style_button_active);
+    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_home);
     lv_obj_add_style(bottom_row, &style_container, 0);
     use_flex_row(bottom_row);
-
-    label_layer = lv_label_create(bottom_row);
-    lv_label_set_text(label_layer, "");
-    lv_obj_align(label_layer, LV_ALIGN_LEFT_MID, 20, 0);
-    display_process_layer_state(0);
-
-    label_layout = lv_label_create(bottom_row);
-    lv_label_set_text(label_layout, "");
-    lv_obj_align(label_layout, LV_ALIGN_RIGHT_MID, -20, 0);
 
     label_version = lv_label_create(screen_home);
     lv_label_set_text(label_version, EH_VERSION_STR);
@@ -127,7 +113,7 @@ void init_screen_volume(void) {
 
     label_volume_arc = lv_label_create(screen_volume);
     lv_label_set_text(label_volume_arc, "00");
-    lv_obj_set_style_text_font(label_volume_arc, &lv_font_montserrat_48, LV_PART_MAIN);
+    lv_obj_set_style_text_font(label_volume_arc, &lv_font_montserrat_40, LV_PART_MAIN);
     lv_obj_center(label_volume_arc);
 
     lv_obj_t *volume_text_label = lv_label_create(screen_volume);
@@ -165,7 +151,7 @@ bool display_init_kb(void) {
 
     dprint("display_init_kb - initialised\n");
 
-    lv_disp_t  *lv_display = lv_disp_get_default();
+    lv_disp_t * lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, lv_palette_main(LV_PALETTE_TEAL), lv_palette_main(LV_PALETTE_BLUE), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
@@ -176,18 +162,6 @@ bool display_init_kb(void) {
     display_enabled = true;
 
     return display_enabled;
-}
-
-void set_layout_label(uint8_t layout) {
-    switch (layout) {
-        case LANG_EN:
-            lv_label_set_text(label_layout, "EN");
-            break;
-
-        case LANG_RU:
-            lv_label_set_text(label_layout, "RU");
-            break;
-    }
 }
 
 void start_home_screen_timer(void) {
@@ -233,20 +207,15 @@ void display_housekeeping_task(void) {
         lv_scr_load(screen_home);
     }
 
-    if (last_input_activity_elapsed() > EH_TIMEOUT ) {
+    if (last_input_activity_elapsed() > EH_TIMEOUT) {
         qp_power(display, false);
         return;
     } else {
         qp_power(display, true);
     }
 
-    toggle_state(label_shift, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT);
-    toggle_state(label_ctrl, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_CTRL);
-    toggle_state(label_alt, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_ALT);
-    toggle_state(label_gui, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_GUI);
     struct hid_data_t *hid_data = get_hid_data();
     display_process_hid_data(hid_data);
-    set_layout_label(get_cur_lang());
 }
 
 bool led_update_kb(led_t led_state) {
