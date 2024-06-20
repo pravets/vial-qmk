@@ -25,6 +25,7 @@ static lv_obj_t *screen_media;
 /* home screen content */
 static lv_obj_t *label_time;
 static lv_obj_t *label_volume_home;
+static lv_obj_t *txt_layer;
 static lv_obj_t *label_layer;
 static lv_obj_t *label_version;
 
@@ -80,6 +81,9 @@ void init_screen_home(void) {
     label_time = lv_label_create(screen_home);
     lv_label_set_text(label_time, "Macropad");
     lv_obj_set_style_text_font(label_time, &lv_font_montserrat_40, LV_PART_MAIN);
+
+    txt_layer = lv_label_create(screen_home);
+    lv_label_set_text(txt_layer, "Layer:");
 
     label_layer = lv_label_create(screen_home);
     lv_label_set_text(label_layer, "");
