@@ -26,8 +26,6 @@ static lv_obj_t *screen_media;
 static lv_obj_t *label_time;
 static lv_obj_t *label_volume_home;
 static lv_obj_t *label_layer;
-static lv_obj_t *label_caps;
-static lv_obj_t *label_num;
 static lv_obj_t *label_version;
 
 /* volume screen content */
@@ -91,9 +89,6 @@ void init_screen_home(void) {
     lv_obj_t *mods = lv_obj_create(screen_home);
     lv_obj_add_style(mods, &style_container, 0);
     use_flex_row(mods);
-
-    label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
-    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_home);
     lv_obj_add_style(bottom_row, &style_container, 0);
@@ -197,8 +192,30 @@ void display_process_hid_data(struct hid_data_t *hid_data) {
     }
 }
 
+static const char* PROGMEM LAYER_NAME[] =   {
+    "ZERO",
+    "ONE",
+    "TWO",
+    "THREE",
+    "FOUR",
+    "FIVE",
+    "SIX",
+    "SEVEN",
+    "EIGHT",
+    "NINE",
+    "TEN",
+    "ELEVEN",
+    "TWELVE",
+    "THIRTEEN",
+    "FOURTEEN",
+    "FIFTEEN",
+};
+
 void display_process_layer_state(uint8_t layer) {
-    lv_label_set_text(label_layer, layer_upper_name(layer));
+    if (0 <= layer && layer < 16)
+        lv_label_set_text(label_layer, LAYER_NAME[layer]);
+    else
+        lv_label_set_text(label_layer, "UNDEFINED");
 }
 
 void display_housekeeping_task(void) {
@@ -216,14 +233,4 @@ void display_housekeeping_task(void) {
 
     struct hid_data_t *hid_data = get_hid_data();
     display_process_hid_data(hid_data);
-}
-
-bool led_update_kb(led_t led_state) {
-    bool res = led_update_user(led_state);
-    if (res && is_display_enabled()) {
-        toggle_state(label_caps, LV_STATE_PRESSED, led_state.caps_lock);
-        toggle_state(label_num, LV_STATE_PRESSED, led_state.num_lock);
-    }
-
-    return res;
 }
