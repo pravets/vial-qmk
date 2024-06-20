@@ -85,7 +85,7 @@ void init_screen_home(void) {
     lv_label_set_text(label_volume_home, "Ergohaven");
 
     label_time = lv_label_create(screen_home);
-    lv_label_set_text(label_time, "Planeta");
+    lv_label_set_text(label_time, "Macropad");
     lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
 
     lv_obj_t *mods = lv_obj_create(screen_home);
