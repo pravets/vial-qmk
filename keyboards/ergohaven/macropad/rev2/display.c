@@ -120,6 +120,7 @@ void init_screen_home(void) {
         lv_obj_set_size(obj, 77, 40);
         lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
         lv_obj_add_style(obj, &style_screen, 0);
+        if (i >= 12) lv_obj_set_style_border_opa(obj, 0, 0);
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
@@ -258,6 +259,9 @@ static const char *PROGMEM LAYER_NAME[] = {
 const char *keycode_to_str(uint16_t keycode) {
     static char buf[16];
     switch (keycode) {
+        case KC_NO:
+            return "";
+
         case KC_1 ... KC_0:
             sprintf(buf, "%d", (keycode - KC_1 + 1) % 10);
             return buf;
@@ -478,7 +482,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MEDIA_PLAY_PAUSE:
             return LV_SYMBOL_PAUSE;
         case KC_MEDIA_SELECT:
-            return LV_SYMBOL_OK;
+            return LV_SYMBOL_AUDIO;
         case KC_MEDIA_EJECT:
             return LV_SYMBOL_EJECT;
         case KC_MAIL:
@@ -506,9 +510,9 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MEDIA_REWIND:
             return "Media_Rewind";
         case KC_BRIGHTNESS_UP:
-            return EH_SYMBOL_SUN " " LV_SYMBOL_UP;
+            return EH_SYMBOL_SUN LV_SYMBOL_UP;
         case KC_BRIGHTNESS_DOWN:
-            return EH_SYMBOL_SUN " " LV_SYMBOL_DOWN;
+            return EH_SYMBOL_SUN LV_SYMBOL_DOWN;
         case KC_CONTROL_PANEL:
             return LV_SYMBOL_SETTINGS;
         case KC_ASSISTANT:
@@ -571,6 +575,11 @@ const char *keycode_to_str(uint16_t keycode) {
             return "Alt";
         case KC_RIGHT_GUI:
             return "Gui";
+
+        case C(KC_LEFT):
+            return "Ctl" LV_SYMBOL_LEFT;
+        case C(KC_RIGHT):
+            return "Ctl" LV_SYMBOL_RIGHT;
 
         case QK_BOOT:
             return "Reset";
