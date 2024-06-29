@@ -5,6 +5,17 @@
 #include "hid.h"
 #include "ergohaven.h"
 
+LV_FONT_DECLARE(ergohaven_symbols)
+#define EH_SYMBOL_VOLUME_MUTE "\xEF\x9A\xA9"
+#define EH_SYMBOL_DIVIDE "\xEF\x94\xA9"
+#define EH_SYMBOL_MULTIPLY "\xEF\x80\x8D"
+#define EH_SYMBOL_MOUSE "\xEF\xA3\x8C"
+#define EH_SYMBOL_CALC "\xEF\x87\xAC"
+#define EH_SYMBOL_MAIL "\xEF\x83\xA0"
+#define EH_SYMBOL_SEARCH "\xEF\x80\x82"
+#define EH_SYMBOL_COMPUTER "\xEF\x84\x89"
+#define EH_SYMBOL_SUN "\xEF\x86\x85 "
+
 static uint16_t home_screen_timer = 0;
 
 static bool display_enabled;
@@ -112,6 +123,7 @@ void init_screen_home(void) {
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
+        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols, LV_PART_MAIN);
     }
 
     screen_home = lv_obj_create(NULL);
@@ -321,9 +333,9 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_NUM_LOCK:
             return "NumLk";
         case KC_KP_SLASH:
-            return "/"; //
+            return EH_SYMBOL_DIVIDE;
         case KC_KP_ASTERISK:
-            return "*"; //
+            return EH_SYMBOL_MULTIPLY;
         case KC_KP_MINUS:
             return LV_SYMBOL_MINUS;
         case KC_KP_PLUS:
@@ -370,7 +382,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_FIND:
             return "Find";
         case KC_KB_MUTE:
-            return LV_SYMBOL_MUTE;
+            return EH_SYMBOL_VOLUME_MUTE;
         case KC_KB_VOLUME_UP:
             return LV_SYMBOL_VOLUME_MAX;
         case KC_KB_VOLUME_DOWN:
@@ -452,7 +464,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_SYSTEM_WAKE:
             return "System_Wake";
         case KC_AUDIO_MUTE:
-            return LV_SYMBOL_MUTE;
+            return EH_SYMBOL_VOLUME_MUTE;
         case KC_AUDIO_VOL_UP:
             return LV_SYMBOL_VOLUME_MAX;
         case KC_AUDIO_VOL_DOWN:
@@ -470,13 +482,13 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MEDIA_EJECT:
             return LV_SYMBOL_EJECT;
         case KC_MAIL:
-            return "Mail";
+            return EH_SYMBOL_MAIL;
         case KC_CALCULATOR:
-            return "Calculator";
+            return EH_SYMBOL_CALC;
         case KC_MY_COMPUTER:
-            return "My_Computer";
+            return EH_SYMBOL_COMPUTER;
         case KC_WWW_SEARCH:
-            return "Www_Search";
+            return EH_SYMBOL_SEARCH;
         case KC_WWW_HOME:
             return LV_SYMBOL_HOME;
         case KC_WWW_BACK:
@@ -494,11 +506,11 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MEDIA_REWIND:
             return "Media_Rewind";
         case KC_BRIGHTNESS_UP:
-            return "Brightness_Up";
+            return EH_SYMBOL_SUN " " LV_SYMBOL_UP;
         case KC_BRIGHTNESS_DOWN:
-            return "Brightness_Down";
+            return EH_SYMBOL_SUN " " LV_SYMBOL_DOWN;
         case KC_CONTROL_PANEL:
-            return "Control_Panel";
+            return LV_SYMBOL_SETTINGS;
         case KC_ASSISTANT:
             return "Assistant";
         case KC_MISSION_CONTROL:
@@ -506,29 +518,29 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_LAUNCHPAD:
             return "Launchpad";
         case KC_MS_UP:
-            return "M" LV_SYMBOL_UP;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_UP;
         case KC_MS_DOWN:
-            return "M" LV_SYMBOL_DOWN;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_DOWN;
         case KC_MS_LEFT:
-            return "M" LV_SYMBOL_LEFT;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_LEFT;
         case KC_MS_RIGHT:
-            return "M" LV_SYMBOL_RIGHT;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_RIGHT;
         case KC_MS_BTN1:
-            return "M1";
+            return EH_SYMBOL_MOUSE " 1";
         case KC_MS_BTN2:
-            return "M2";
+            return EH_SYMBOL_MOUSE " 2";
         case KC_MS_BTN3:
-            return "M3";
+            return EH_SYMBOL_MOUSE " 3";
         case KC_MS_BTN4:
-            return "M4";
+            return EH_SYMBOL_MOUSE " 4";
         case KC_MS_BTN5:
-            return "M5";
+            return EH_SYMBOL_MOUSE " 5";
         case KC_MS_BTN6:
-            return "M6";
+            return EH_SYMBOL_MOUSE " 6";
         case KC_MS_BTN7:
-            return "M7";
+            return EH_SYMBOL_MOUSE " 7";
         case KC_MS_BTN8:
-            return "M8";
+            return EH_SYMBOL_MOUSE " 8";
         case KC_MS_WH_UP:
             return "W" LV_SYMBOL_UP;
         case KC_MS_WH_DOWN:
