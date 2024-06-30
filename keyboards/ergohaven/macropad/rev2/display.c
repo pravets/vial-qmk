@@ -552,6 +552,7 @@ const char *basic_keycode_to_str(uint16_t keycode) {
 }
 
 const char *special_keycode_to_str(uint16_t keycode) {
+    static char buf[16];
     switch (keycode) {
         case QK_BOOT:
             return LV_SYMBOL_KEYBOARD "Rst";
@@ -559,6 +560,12 @@ const char *special_keycode_to_str(uint16_t keycode) {
             return EH_SYMBOL_ANGLES_RIGHT;
         case LAYER_PREV:
             return EH_SYMBOL_ANGLES_LEFT;
+        case QK_MACRO ... QK_MACRO_MAX:
+            sprintf(buf, "M%d", keycode - QK_MACRO);
+            return buf;
+        case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
+            sprintf(buf, "TD%d", keycode - QK_TAP_DANCE);
+            return buf;
         default:
             return "";
     }
