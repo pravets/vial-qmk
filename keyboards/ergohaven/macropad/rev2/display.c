@@ -271,7 +271,7 @@ static const char *PROGMEM LAYER_NAME[] = {
     "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
 };
 
-const char *keycode_to_str(uint16_t keycode) {
+const char *basic_keycode_to_str(uint16_t keycode) {
     static char buf[16];
     switch (keycode) {
         case KC_NO:
@@ -546,11 +546,13 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_RIGHT_GUI:
             return "Gui";
 
-        case C(KC_LEFT):
-            return "Ctl" EH_SYMBOL_LEFT;
-        case C(KC_RIGHT):
-            return "Ctl" EH_SYMBOL_RIGHT;
+        default:
+            return "Unkn";
+    }
+}
 
+const char *special_keycode_to_str(uint16_t keycode) {
+    switch (keycode) {
         case QK_BOOT:
             return LV_SYMBOL_KEYBOARD "Rst";
         case LAYER_NEXT:
@@ -558,8 +560,55 @@ const char *keycode_to_str(uint16_t keycode) {
         case LAYER_PREV:
             return EH_SYMBOL_ANGLES_LEFT;
         default:
-            return "Unkn";
+            return "";
     }
+}
+
+const char *keycode_to_str(uint16_t keycode) {
+    const char *special_str = special_keycode_to_str(keycode);
+    if (strlen(special_str) > 0) return special_str;
+
+    uint8_t     mods              = QK_MODS_GET_MODS(keycode);
+    uint8_t     basic_keycode     = QK_MODS_GET_BASIC_KEYCODE(keycode);
+    const char *basic_keycode_str = basic_keycode_to_str(basic_keycode);
+    bool        ctrl              = mods & MOD_MASK_CTRL;
+    bool        shift             = mods & MOD_MASK_SHIFT;
+    bool        alt               = mods & MOD_MASK_ALT;
+    bool        gui               = mods & MOD_MASK_GUI;
+    char       *mod_str;
+    if (ctrl && shift && alt && gui)
+        mod_str = "CSAG ";
+    else if (shift && alt && gui)
+        mod_str = "SAG ";
+    else if (ctrl && alt && gui)
+        mod_str = "CAG ";
+    else if (ctrl && shift && gui)
+        mod_str = "CSG ";
+    else if (ctrl && shift && alt)
+        mod_str = "CSA ";
+    else if (alt && gui)
+        mod_str = "AG ";
+    else if (shift && gui)
+        mod_str = "SG ";
+    else if (shift && alt)
+        mod_str = "SA ";
+    else if (ctrl && gui)
+        mod_str = "CG ";
+    else if (ctrl && shift)
+        mod_str = "CS ";
+    else if (ctrl)
+        mod_str = "Ctl ";
+    else if (shift)
+        mod_str = "Sft ";
+    else if (alt)
+        mod_str = "Alt ";
+    else if (gui)
+        mod_str = "Gui ";
+    else
+        mod_str = "";
+    static char buf[16];
+    sprintf(buf, "%s%s", mod_str, basic_keycode_str);
+    return buf;
 }
 
 uint16_t get_keycode(int layer, int row, int col) {
