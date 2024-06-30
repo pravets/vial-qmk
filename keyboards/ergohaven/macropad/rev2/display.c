@@ -272,7 +272,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_ENTER:
             return LV_SYMBOL_NEW_LINE;
         case KC_ESCAPE:
-            return "Escape";
+            return "Esc";
         case KC_BACKSPACE:
             return LV_SYMBOL_BACKSPACE;
         case KC_TAB:
@@ -321,7 +321,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_PAGE_UP:
             return "Pg" LV_SYMBOL_UP;
         case KC_DELETE:
-            return "Delete";
+            return "Del";
         case KC_END:
             return "End";
         case KC_PAGE_DOWN:
@@ -359,18 +359,17 @@ const char *keycode_to_str(uint16_t keycode) {
             return LV_SYMBOL_POWER;
         case KC_KP_EQUAL:
             return "="; //
-        case KC_F13:
-        case KC_F24:
+        case KC_F13 ... KC_F24:
             sprintf(buf, "F%d", keycode - KC_F13 + 13);
             return buf;
         case KC_EXECUTE:
-            return "Execute"; //
+            return "Exec"; //
         case KC_HELP:
             return "Help"; //
         case KC_MENU:
             return "Menu"; //
         case KC_SELECT:
-            return "Select"; //
+            return LV_SYMBOL_OK;
         case KC_STOP:
             return "Stop"; //
         case KC_AGAIN:
@@ -391,52 +390,8 @@ const char *keycode_to_str(uint16_t keycode) {
             return LV_SYMBOL_VOLUME_MAX;
         case KC_KB_VOLUME_DOWN:
             return LV_SYMBOL_VOLUME_MID;
-        case KC_LOCKING_CAPS_LOCK:
-            return "Locking_Caps_Lock";
-        case KC_LOCKING_NUM_LOCK:
-            return "Locking_Num_Lock";
-        case KC_LOCKING_SCROLL_LOCK:
-            return "Locking_Scroll_Lock";
         case KC_KP_COMMA:
             return ",";
-        case KC_KP_EQUAL_AS400:
-            return "Kp_Equal_As400";
-        case KC_INTERNATIONAL_1:
-            return "International_1";
-        case KC_INTERNATIONAL_2:
-            return "International_2";
-        case KC_INTERNATIONAL_3:
-            return "International_3";
-        case KC_INTERNATIONAL_4:
-            return "International_4";
-        case KC_INTERNATIONAL_5:
-            return "International_5";
-        case KC_INTERNATIONAL_6:
-            return "International_6";
-        case KC_INTERNATIONAL_7:
-            return "International_7";
-        case KC_INTERNATIONAL_8:
-            return "International_8";
-        case KC_INTERNATIONAL_9:
-            return "International_9";
-        case KC_LANGUAGE_1:
-            return "Language_1";
-        case KC_LANGUAGE_2:
-            return "Language_2";
-        case KC_LANGUAGE_3:
-            return "Language_3";
-        case KC_LANGUAGE_4:
-            return "Language_4";
-        case KC_LANGUAGE_5:
-            return "Language_5";
-        case KC_LANGUAGE_6:
-            return "Language_6";
-        case KC_LANGUAGE_7:
-            return "Language_7";
-        case KC_LANGUAGE_8:
-            return "Language_8";
-        case KC_LANGUAGE_9:
-            return "Language_9";
         case KC_ALTERNATE_ERASE:
             return "Alternate_Erase";
         case KC_SYSTEM_REQUEST:
@@ -502,7 +457,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_WWW_STOP:
             return "Www_Stop";
         case KC_WWW_REFRESH:
-            return "Www_Refresh";
+            return LV_SYMBOL_REFRESH;
         case KC_WWW_FAVORITES:
             return "Www_Favorites";
         case KC_MEDIA_FAST_FORWARD:
