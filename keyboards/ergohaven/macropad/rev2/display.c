@@ -6,6 +6,7 @@
 #include "ergohaven.h"
 
 LV_FONT_DECLARE(ergohaven_symbols)
+
 #define EH_SYMBOL_VOLUME_MUTE "\xEF\x9A\xA9"
 #define EH_SYMBOL_DIVIDE "\xEF\x94\xA9"
 #define EH_SYMBOL_MULTIPLY "\xEF\x80\x8D"
@@ -13,8 +14,22 @@ LV_FONT_DECLARE(ergohaven_symbols)
 #define EH_SYMBOL_CALC "\xEF\x87\xAC"
 #define EH_SYMBOL_MAIL "\xEF\x83\xA0"
 #define EH_SYMBOL_SEARCH "\xEF\x80\x82"
+#define EH_SYMBOL_HEART "\xEF\x80\x84"
 #define EH_SYMBOL_COMPUTER "\xEF\x84\x89"
-#define EH_SYMBOL_SUN "\xEF\x86\x85 "
+#define EH_SYMBOL_SUN "\xEF\x86\x85"
+#define EH_SYMBOL_MOON "\xEF\x86\x86"
+#define EH_SYMBOL_DOWN "\xEF\x8C\x89"
+#define EH_SYMBOL_LEFT "\xEF\x8C\x8A"
+#define EH_SYMBOL_RIGHT "\xEF\x8C\x8B"
+#define EH_SYMBOL_UP "\xEF\x8C\x8C"
+#define EH_SYMBOL_ANGLES_LEFT "\xEF\x84\x80"
+#define EH_SYMBOL_ANGLES_RIGHT "\xEF\x84\x81"
+#define EH_SYMBOL_ANGLES_UP "\xEF\x84\x82"
+#define EH_SYMBOL_ANGLES_DOWN "\xEF\x84\x83"
+#define EH_SYMBOL_INFO "\xEF\x81\x9A"
+#define EH_SYMBOL_ROTATE_RIGHT "\xEF\x8B\xB9"
+#define EH_SYMBOL_ROTATE_LEFT "\xEF\x8B\xAA"
+#define EH_SYMBOL_GLOBE "\xEF\x82\xAC"
 
 static uint16_t home_screen_timer = 0;
 
@@ -315,7 +330,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_PAUSE:
             return "Pause";
         case KC_INSERT:
-            return "Insert";
+            return "Ins";
         case KC_HOME:
             return "Home";
         case KC_PAGE_UP:
@@ -327,13 +342,13 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_PAGE_DOWN:
             return "Pg" LV_SYMBOL_DOWN;
         case KC_RIGHT:
-            return LV_SYMBOL_RIGHT;
+            return EH_SYMBOL_RIGHT;
         case KC_LEFT:
-            return LV_SYMBOL_LEFT;
+            return EH_SYMBOL_LEFT;
         case KC_DOWN:
-            return LV_SYMBOL_DOWN;
+            return EH_SYMBOL_DOWN;
         case KC_UP:
-            return LV_SYMBOL_UP;
+            return EH_SYMBOL_UP;
         case KC_NUM_LOCK:
             return "NumLk";
         case KC_KP_SLASH:
@@ -365,7 +380,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_EXECUTE:
             return "Exec"; //
         case KC_HELP:
-            return "Help"; //
+            return EH_SYMBOL_INFO;
         case KC_MENU:
             return "Menu"; //
         case KC_SELECT:
@@ -373,9 +388,9 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_STOP:
             return "Stop"; //
         case KC_AGAIN:
-            return "Again"; //
+            return EH_SYMBOL_ROTATE_RIGHT;
         case KC_UNDO:
-            return "Undo"; //
+            return EH_SYMBOL_ROTATE_LEFT;
         case KC_CUT:
             return LV_SYMBOL_CUT;
         case KC_COPY:
@@ -383,7 +398,7 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_PASTE:
             return LV_SYMBOL_PASTE;
         case KC_FIND:
-            return "Find";
+            return EH_SYMBOL_SEARCH;
         case KC_KB_MUTE:
             return EH_SYMBOL_VOLUME_MUTE;
         case KC_KB_VOLUME_UP:
@@ -447,43 +462,43 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MY_COMPUTER:
             return EH_SYMBOL_COMPUTER;
         case KC_WWW_SEARCH:
-            return EH_SYMBOL_SEARCH;
+            return EH_SYMBOL_GLOBE " " EH_SYMBOL_SEARCH;
         case KC_WWW_HOME:
-            return LV_SYMBOL_HOME;
+            return EH_SYMBOL_GLOBE " " LV_SYMBOL_HOME;
         case KC_WWW_BACK:
-            return "Www_Back";
+            return EH_SYMBOL_GLOBE " " EH_SYMBOL_ROTATE_LEFT;
         case KC_WWW_FORWARD:
-            return "Www_Forward";
+            return EH_SYMBOL_GLOBE " " EH_SYMBOL_ROTATE_RIGHT;
         case KC_WWW_STOP:
-            return "Www_Stop";
+            return EH_SYMBOL_GLOBE " " LV_SYMBOL_CLOSE;
         case KC_WWW_REFRESH:
-            return LV_SYMBOL_REFRESH;
+            return EH_SYMBOL_GLOBE " " LV_SYMBOL_REFRESH;
         case KC_WWW_FAVORITES:
-            return "Www_Favorites";
+            return EH_SYMBOL_GLOBE " " EH_SYMBOL_HEART;
         case KC_MEDIA_FAST_FORWARD:
-            return "Media_Fast_Forward";
+            return LV_SYMBOL_NEXT;
         case KC_MEDIA_REWIND:
-            return "Media_Rewind";
+            return LV_SYMBOL_PREV;
         case KC_BRIGHTNESS_UP:
-            return EH_SYMBOL_SUN LV_SYMBOL_UP;
+            return EH_SYMBOL_SUN;
         case KC_BRIGHTNESS_DOWN:
-            return EH_SYMBOL_SUN LV_SYMBOL_DOWN;
+            return EH_SYMBOL_MOON;
         case KC_CONTROL_PANEL:
             return LV_SYMBOL_SETTINGS;
         case KC_ASSISTANT:
-            return "Assistant";
+            return "Astn";
         case KC_MISSION_CONTROL:
-            return "Mission_Control";
+            return "MsCtr";
         case KC_LAUNCHPAD:
             return "Launchpad";
         case KC_MS_UP:
-            return EH_SYMBOL_MOUSE " " LV_SYMBOL_UP;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_UP;
         case KC_MS_DOWN:
-            return EH_SYMBOL_MOUSE " " LV_SYMBOL_DOWN;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_DOWN;
         case KC_MS_LEFT:
-            return EH_SYMBOL_MOUSE " " LV_SYMBOL_LEFT;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_LEFT;
         case KC_MS_RIGHT:
-            return EH_SYMBOL_MOUSE " " LV_SYMBOL_RIGHT;
+            return EH_SYMBOL_MOUSE " " EH_SYMBOL_RIGHT;
         case KC_MS_BTN1:
             return EH_SYMBOL_MOUSE " 1";
         case KC_MS_BTN2:
@@ -501,19 +516,19 @@ const char *keycode_to_str(uint16_t keycode) {
         case KC_MS_BTN8:
             return EH_SYMBOL_MOUSE " 8";
         case KC_MS_WH_UP:
-            return "W" LV_SYMBOL_UP;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_UP;
         case KC_MS_WH_DOWN:
-            return "W" LV_SYMBOL_DOWN;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_DOWN;
         case KC_MS_WH_LEFT:
-            return "W" LV_SYMBOL_LEFT;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_LEFT;
         case KC_MS_WH_RIGHT:
-            return "W" LV_SYMBOL_RIGHT;
+            return EH_SYMBOL_MOUSE " " LV_SYMBOL_RIGHT;
         case KC_MS_ACCEL0:
-            return "Ms_Accel0";
+            return EH_SYMBOL_MOUSE " Acc0";
         case KC_MS_ACCEL1:
-            return "Ms_Accel1";
+            return EH_SYMBOL_MOUSE " Acc1";
         case KC_MS_ACCEL2:
-            return "Ms_Accel2";
+            return EH_SYMBOL_MOUSE " Acc2";
         case KC_LEFT_CTRL:
             return "Ctrl";
         case KC_LEFT_SHIFT:
@@ -532,16 +547,16 @@ const char *keycode_to_str(uint16_t keycode) {
             return "Gui";
 
         case C(KC_LEFT):
-            return "Ctl" LV_SYMBOL_LEFT;
+            return "Ctl" EH_SYMBOL_LEFT;
         case C(KC_RIGHT):
-            return "Ctl" LV_SYMBOL_RIGHT;
+            return "Ctl" EH_SYMBOL_RIGHT;
 
         case QK_BOOT:
-            return "Reset";
+            return LV_SYMBOL_KEYBOARD "Rst";
         case LAYER_NEXT:
-            return LV_SYMBOL_RIGHT LV_SYMBOL_RIGHT;
+            return EH_SYMBOL_ANGLES_RIGHT;
         case LAYER_PREV:
-            return LV_SYMBOL_LEFT LV_SYMBOL_LEFT;
+            return EH_SYMBOL_ANGLES_LEFT;
         default:
             return "Unkn";
     }
