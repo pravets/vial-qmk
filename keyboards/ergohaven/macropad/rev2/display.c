@@ -108,10 +108,9 @@ void init_screen_home(void) {
 
     label_layer_small = lv_label_create(screen_test);
     lv_label_set_text(label_layer_small, "layer");
-    lv_obj_set_style_pad_top(label_layer_small, 20, 0);
-    lv_obj_set_style_pad_bottom(label_layer_small, 25, 0);
+    lv_obj_set_style_pad_top(label_layer_small, 10, 0);
+    lv_obj_set_style_pad_bottom(label_layer_small, 5, 0);
     lv_obj_set_style_text_color(label_layer_small, lv_palette_main(LV_PALETTE_TEAL), 0);
-    lv_obj_set_style_text_font(label_layer_small, &lv_font_montserrat_28, LV_PART_MAIN);
 
     lv_obj_t *cont = lv_obj_create(screen_test);
     lv_obj_set_size(cont, 232, 250);
@@ -127,13 +126,13 @@ void init_screen_home(void) {
     for (i = 0; i < 15; i++) {
         if (i == 12) {
             lv_obj_t *obj = lv_obj_create(cont);
-            lv_obj_set_size(obj, 231, 10);
+            lv_obj_set_size(obj, 231, 20);
             lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
             lv_obj_add_style(obj, &style_screen, 0);
             lv_obj_set_style_border_opa(obj, 0, 0);
         }
         lv_obj_t *obj = lv_obj_create(cont);
-        lv_obj_set_size(obj, 77, 45);
+        lv_obj_set_size(obj, 77, 40);
         lv_obj_set_scrollbar_mode(obj, LV_SCROLLBAR_MODE_OFF);
         lv_obj_add_style(obj, &style_screen, 0);
         if (i >= 12) lv_obj_set_style_border_opa(obj, 0, 0);
@@ -141,7 +140,6 @@ void init_screen_home(void) {
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
         lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols, LV_PART_MAIN);
-        lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
     }
 
     screen_home = lv_obj_create(NULL);
@@ -226,7 +224,7 @@ bool display_init_kb(void) {
 
     dprint("display_init_kb - initialised\n");
 
-    lv_disp_t * lv_display = lv_disp_get_default();
+    lv_disp_t  *lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, lv_palette_main(LV_PALETTE_TEAL), lv_palette_main(LV_PALETTE_BLUE), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
@@ -587,37 +585,35 @@ const char *keycode_to_str(uint16_t keycode) {
     bool        shift             = mods & MOD_MASK_SHIFT;
     bool        alt               = mods & MOD_MASK_ALT;
     bool        gui               = mods & MOD_MASK_GUI;
-    char *      mod_str;
+    char       *mod_str;
     if (ctrl && shift && alt && gui)
-        mod_str = "CSAG\n";
+        mod_str = "CSAG ";
     else if (shift && alt && gui)
-        mod_str = "SAG\n";
+        mod_str = "SAG ";
     else if (ctrl && alt && gui)
-        mod_str = "CAG\n";
+        mod_str = "CAG ";
     else if (ctrl && shift && gui)
-        mod_str = "CSG\n";
+        mod_str = "CSG ";
     else if (ctrl && shift && alt)
-        mod_str = "CSA\n";
+        mod_str = "CSA ";
     else if (alt && gui)
-        mod_str = "Alt Gui\n";
+        mod_str = "AG ";
     else if (shift && gui)
-        mod_str = "Sft Gui\n";
+        mod_str = "SG ";
     else if (shift && alt)
-        mod_str = "Sft Alt\n";
+        mod_str = "SA ";
     else if (ctrl && gui)
-        mod_str = "Ctl Gui\n";
+        mod_str = "CG ";
     else if (ctrl && shift)
-        mod_str = "Ctl Sft\n";
-    else if (ctrl && alt)
-        mod_str = "Ctl Alt\n";
+        mod_str = "CS ";
     else if (ctrl)
-        mod_str = "Ctl\n";
+        mod_str = "Ctl ";
     else if (shift)
-        mod_str = "Sft\n";
+        mod_str = "Sft ";
     else if (alt)
-        mod_str = "Alt\n";
+        mod_str = "Alt ";
     else if (gui)
-        mod_str = "Gui\n";
+        mod_str = "Gui ";
     else
         mod_str = "";
     static char buf[16];
