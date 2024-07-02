@@ -214,6 +214,9 @@ bool display_init_kb(void) {
     display_enabled = false;
     dprint("display_init_kb - start\n");
 
+    gpio_set_pin_output(GP17);
+    gpio_write_pin_high(GP17);
+
     display = qp_st7789_make_spi_device(240, 280, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 16, 3);
     qp_set_viewport_offsets(display, 0, 20);
 
@@ -660,9 +663,11 @@ void display_housekeeping_task(void) {
     }
 
     if (last_input_activity_elapsed() > EH_TIMEOUT) {
+        gpio_write_pin_low(GP17);
         qp_power(display, false);
         return;
     } else {
+        gpio_write_pin_high(GP17);
         qp_power(display, true);
     }
 
