@@ -226,7 +226,7 @@ bool display_init_kb(void) {
 
     dprint("display_init_kb - initialised\n");
 
-    lv_disp_t * lv_display = lv_disp_get_default();
+    lv_disp_t  *lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, lv_palette_main(LV_PALETTE_TEAL), lv_palette_main(LV_PALETTE_BLUE), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
@@ -561,6 +561,16 @@ const char *special_keycode_to_str(uint16_t keycode) {
     switch (keycode) {
         case QK_BOOT:
             return LV_SYMBOL_KEYBOARD "Rst";
+        case NEXTSEN:
+            return "Next\nsent";
+        case PREDL:
+            return "Next\npredl";
+        case BRACES:
+            return "[ ]";
+        case PARENTH:
+            return "( )";
+        case ALT_TAB:
+            return "Alt Tab";
         case LAYER_NEXT:
             return EH_SYMBOL_ANGLES_RIGHT;
         case LAYER_PREV:
@@ -587,7 +597,7 @@ const char *keycode_to_str(uint16_t keycode) {
     bool        shift             = mods & MOD_MASK_SHIFT;
     bool        alt               = mods & MOD_MASK_ALT;
     bool        gui               = mods & MOD_MASK_GUI;
-    char *      mod_str;
+    char       *mod_str;
     if (ctrl && shift && alt && gui)
         mod_str = "CSAG\n";
     else if (shift && alt && gui)
