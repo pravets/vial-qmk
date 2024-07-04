@@ -108,7 +108,7 @@ void init_screen_home(void) {
 
     label_layer_small = lv_label_create(screen_test);
     lv_label_set_text(label_layer_small, "layer");
-    lv_obj_set_style_pad_top(label_layer_small, 20, 0);
+    lv_obj_set_style_pad_top(label_layer_small, 25, 0);
     lv_obj_set_style_pad_bottom(label_layer_small, 25, 0);
     lv_obj_set_style_text_color(label_layer_small, lv_palette_main(LV_PALETTE_TEAL), 0);
     lv_obj_set_style_text_font(label_layer_small, &lv_font_montserrat_28, LV_PART_MAIN);
