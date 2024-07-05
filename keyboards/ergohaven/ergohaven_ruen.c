@@ -28,6 +28,7 @@ void set_lang(uint8_t lang) {
                 unregister_code(KC_LGUI);
                 wait_ms(50);
             }
+            break;
         case TG_M0:
             if (cur_lang == lang) return;
             dynamic_keymap_macro_send(QK_MACRO_0 - QK_MACRO);
@@ -126,7 +127,9 @@ bool pre_process_record_ruen(uint16_t keycode, keyrecord_t *record) {
             case KC_ESCAPE:
             case KC_MINUS:
                 english_word = false;
+                caps_word_off();
                 set_lang(LANG_RU);
+                break;
             default:
                 break;
         }
@@ -136,21 +139,23 @@ bool pre_process_record_ruen(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_ruen(uint16_t keycode, keyrecord_t *record) {
+    if (!record->event.pressed) return true;
+
     switch (keycode) {
         case LG_TOGGLE:
-            if (record->event.pressed) lang_toggle();
+            lang_toggle();
             return false;
 
         case LG_SYNC:
-            if (record->event.pressed) lang_sync();
+            lang_sync();
             return false;
 
         case LG_SET_EN:
-            if (record->event.pressed) set_lang(LANG_EN);
+            set_lang(LANG_EN);
             return false;
 
         case LG_SET_RU:
-            if (record->event.pressed) set_lang(LANG_RU);
+            set_lang(LANG_RU);
             return false;
 
         case LG_SET_M0:
@@ -164,51 +169,41 @@ bool process_record_ruen(uint16_t keycode, keyrecord_t *record) {
         case LG_SET_DFLT:
             tg_mode = TG_DEFAULT;
             return false;
-    }
 
-    if (LG_RU_EN_START <= keycode && keycode < LG_EN_START) {
-        if (record->event.pressed) {
+        case LG_RU_EN_START ... LG_SLASH:
             if (cur_lang == 0)
                 tap_code16(ru_en_table[keycode - LG_RU_EN_START].en);
             else
                 tap_code16(ru_en_table[keycode - LG_RU_EN_START].ru);
-        }
-        return false;
-    }
+            return false;
 
-    if (LG_EN_START <= keycode && keycode < LG_NUM) {
-        if (record->event.pressed) {
-            if (record->event.pressed) {
-                uint8_t lang = cur_lang;
-                set_lang(LANG_EN);
-                tap_code16(en_table[keycode - LG_EN_START]);
-                should_revert_ru = should_revert_ru || (cur_lang != lang);
-                revert_ru_time   = timer_read32();
-            }
+        case LG_EN_START ... LG_QUOTE: {
+            uint8_t lang = cur_lang;
+            set_lang(LANG_EN);
+            tap_code16(en_table[keycode - LG_EN_START]);
+            should_revert_ru = should_revert_ru || (cur_lang != lang);
+            revert_ru_time   = timer_read32();
+            return false;
         }
-        return false;
-    }
 
-    if (keycode == LG_NUM) {
-        if (record->event.pressed) {
-            if (record->event.pressed) {
-                uint8_t lang = cur_lang;
-                set_lang(LANG_RU);
-                tap_code16(LSFT(KC_3));
-                set_lang(lang);
-            }
+        case LG_NUM: {
+            uint8_t lang = cur_lang;
+            set_lang(LANG_RU);
+            tap_code16(LSFT(KC_3));
+            set_lang(lang);
+            return false;
         }
-        return false;
-    }
 
-    if (keycode == LG_WORD) {
-        if (record->event.pressed) {
-            if (cur_lang == LANG_RU) {
+        case LG_WORD: {
+            if (cur_lang == LANG_RU && !english_word) {
                 english_word = true;
+                bool shift   = (get_mods() | get_oneshot_mods() | get_weak_mods()) & MOD_MASK_SHIFT;
+                if (get_oneshot_mods() & MOD_MASK_SHIFT) clear_oneshot_mods();
                 set_lang(LANG_EN);
+                if (shift) caps_word_on();
             }
+            return false;
         }
-        return false;
     }
 
     return true;
