@@ -30,6 +30,7 @@ LV_FONT_DECLARE(ergohaven_symbols)
 #define EH_SYMBOL_ROTATE_RIGHT "\xEF\x8B\xB9"
 #define EH_SYMBOL_ROTATE_LEFT "\xEF\x8B\xAA"
 #define EH_SYMBOL_GLOBE "\xEF\x82\xAC"
+#define EH_SYMBOL_LAYER "\xEF\x97\xBD"
 
 static uint16_t home_screen_timer = 0;
 
@@ -226,7 +227,7 @@ bool display_init_kb(void) {
 
     dprint("display_init_kb - initialised\n");
 
-    lv_disp_t  *lv_display = lv_disp_get_default();
+    lv_disp_t * lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, lv_palette_main(LV_PALETTE_TEAL), lv_palette_main(LV_PALETTE_BLUE), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
@@ -275,6 +276,14 @@ void display_process_hid_data(struct hid_data_t *hid_data) {
 static const char *PROGMEM LAYER_NAME[] = {
     "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
 };
+
+const char *get_layer_name(uint8_t layer) {
+    if (layer < 16) {
+        return LAYER_NAME[layer];
+    } else {
+        return "UNDEFINED";
+    }
+}
 
 const char *basic_keycode_to_str(uint16_t keycode) {
     static char buf[16];
@@ -557,10 +566,34 @@ const char *basic_keycode_to_str(uint16_t keycode) {
 }
 
 const char *special_keycode_to_str(uint16_t keycode) {
-    static char buf[16];
+    static char buf[32];
     switch (keycode) {
         case QK_BOOT:
             return LV_SYMBOL_KEYBOARD "Rst";
+        case QK_TO ... QK_TO_MAX:
+            sprintf(buf, "TO\n" EH_SYMBOL_LAYER "%d", keycode - QK_TO);
+            return buf;
+        case QK_MOMENTARY ... QK_MOMENTARY_MAX:
+            sprintf(buf, "MO\n" EH_SYMBOL_LAYER "%d", keycode - QK_MOMENTARY);
+            return buf;
+        case QK_DEF_LAYER ... QK_DEF_LAYER_MAX:
+            sprintf(buf, "DF\n" EH_SYMBOL_LAYER "%d", keycode - QK_DEF_LAYER);
+            return buf;
+        case QK_TOGGLE_LAYER ... QK_TOGGLE_LAYER_MAX:
+            sprintf(buf, "TG\n" EH_SYMBOL_LAYER "%d", keycode - QK_TOGGLE_LAYER);
+            return buf;
+        case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE_MAX:
+            sprintf(buf, "TT\n" EH_SYMBOL_LAYER "%d", keycode - QK_LAYER_TAP_TOGGLE);
+            return buf;
+        case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_LAYER_MAX:
+            sprintf(buf, "OSL\n" EH_SYMBOL_LAYER "%d", keycode - QK_ONE_SHOT_LAYER);
+            return buf;
+        case QK_LAYER_TAP ... QK_LAYER_TAP_MAX: {
+            int layer = QK_LAYER_TAP_GET_LAYER(keycode);
+            int kc    = QK_LAYER_TAP_GET_TAP_KEYCODE(keycode);
+            sprintf(buf, EH_SYMBOL_LAYER "%d\n%s", layer, basic_keycode_to_str(kc));
+            return buf;
+        }
         case NEXTSEN:
             return "Next\nsent";
         case PREDL:
@@ -572,9 +605,9 @@ const char *special_keycode_to_str(uint16_t keycode) {
         case ALT_TAB:
             return "Alt Tab";
         case LAYER_NEXT:
-            return EH_SYMBOL_ANGLES_RIGHT;
+            return EH_SYMBOL_LAYER EH_SYMBOL_ANGLES_RIGHT;
         case LAYER_PREV:
-            return EH_SYMBOL_ANGLES_LEFT;
+            return EH_SYMBOL_LAYER EH_SYMBOL_ANGLES_LEFT;
         case QK_MACRO ... QK_MACRO_MAX:
             sprintf(buf, "M%d", keycode - QK_MACRO);
             return buf;
@@ -597,7 +630,7 @@ const char *keycode_to_str(uint16_t keycode) {
     bool        shift             = mods & MOD_MASK_SHIFT;
     bool        alt               = mods & MOD_MASK_ALT;
     bool        gui               = mods & MOD_MASK_GUI;
-    char       *mod_str;
+    char *      mod_str;
     if (ctrl && shift && alt && gui)
         mod_str = "CSAG\n";
     else if (shift && alt && gui)
@@ -630,7 +663,7 @@ const char *keycode_to_str(uint16_t keycode) {
         mod_str = "Gui\n";
     else
         mod_str = "";
-    static char buf[16];
+    static char buf[32];
     sprintf(buf, "%s%s", mod_str, basic_keycode_str);
     return buf;
 }
@@ -648,13 +681,9 @@ uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
 }
 
 void display_process_layer_state(uint8_t layer) {
-    if (0 <= layer && layer < 16) {
-        lv_label_set_text(label_layer, LAYER_NAME[layer]);
-        lv_label_set_text(label_layer_small, LAYER_NAME[layer]);
-    } else {
-        lv_label_set_text(label_layer, "UNDEFINED");
-        lv_label_set_text(label_layer_small, "UNDEFINED");
-    }
+    const char *layer_name = get_layer_name(layer);
+    lv_label_set_text(label_layer, layer_name);
+    lv_label_set_text(label_layer_small, layer_name);
 
     for (int i = 0; i < 15; i++) {
         uint16_t keycode = KC_TRANSPARENT;
