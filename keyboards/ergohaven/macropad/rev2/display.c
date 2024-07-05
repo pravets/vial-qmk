@@ -375,7 +375,7 @@ const char *basic_keycode_to_str(uint16_t keycode) {
             return LV_SYMBOL_PLUS;
         case KC_KP_ENTER:
             return LV_SYMBOL_NEW_LINE;
-        case KC_KP_1 ... KC_KP_9:
+        case KC_KP_1 ... KC_KP_0:
             sprintf(buf, "%d", (keycode - KC_KP_1 + 1) % 10);
             return buf;
         case KC_KP_DOT:
@@ -568,6 +568,48 @@ const char *basic_keycode_to_str(uint16_t keycode) {
 const char *special_keycode_to_str(uint16_t keycode) {
     static char buf[32];
     switch (keycode) {
+        case KC_TILD:
+            return "~";
+        case KC_EXLM:
+            return "!";
+        case KC_AT:
+            return "@";
+        case KC_HASH:
+            return "#";
+        case KC_DLR:
+            return "$";
+        case KC_PERC:
+            return "%";
+        case KC_CIRC:
+            return "^";
+        case KC_AMPR:
+            return "&";
+        case KC_ASTR:
+            return "*";
+        case KC_LPRN:
+            return "(";
+        case KC_RPRN:
+            return ")";
+        case KC_UNDS:
+            return "_";
+        case KC_PLUS:
+            return "+";
+        case KC_LCBR:
+            return "{";
+        case KC_RCBR:
+            return "}";
+        case KC_PIPE:
+            return "|";
+        case KC_COLN:
+            return ":";
+        case KC_DQUO:
+            return "\"";
+        case KC_LABK:
+            return "<";
+        case KC_RABK:
+            return ">";
+        case KC_QUES:
+            return "?";
         case QK_BOOT:
             return LV_SYMBOL_KEYBOARD "Rst";
         case QK_TO ... QK_TO_MAX:
