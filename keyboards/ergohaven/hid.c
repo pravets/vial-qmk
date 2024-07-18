@@ -7,6 +7,8 @@ struct hid_data_t *get_hid_data(void) {
     return &hid_data;
 }
 
+#ifdef EH_HID
+
 typedef enum {
     _TIME = 0xAA, // random value that does not conflict with VIA, must match companion app
     _VOLUME,
@@ -51,8 +53,9 @@ void process_raw_hid_data(uint8_t *data, uint8_t length) {
             break;
     }
 }
+#endif
 
-#if defined(OLED_ENABLE) && defined(SPLIT_KEYBOARD)
+#if defined(OLED_ENABLE) && defined(SPLIT_KEYBOARD) && defined(EH_HID)
 #    include "transactions.h"
 
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
@@ -70,9 +73,11 @@ void keyboard_post_init_hid(void) {
 
 #else
 
+#    ifdef EH_HID
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {
     process_raw_hid_data(data, length);
 }
+#    endif
 
 void keyboard_post_init_hid(void) {}
 
