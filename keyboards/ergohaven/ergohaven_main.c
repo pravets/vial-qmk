@@ -4,6 +4,21 @@
 #include "ergohaven_oled.h"
 #include "hid.h"
 
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t ruen_toggle_mode : 2;
+    };
+} kb_config_t;
+
+kb_config_t kb_config;
+
+void kb_config_update_ruen_toggle_mode(uint8_t mode)
+{
+    kb_config.ruen_toggle_mode = mode;
+    eeconfig_update_kb(kb_config.raw);
+}
+
 #ifdef AUDIO_ENABLE
 float base_sound[][2] = SONG(TERMINAL_SOUND);
 float caps_sound[][2] = SONG(CAPS_LOCK_ON_SOUND);
@@ -25,11 +40,11 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
   // #endif
 
   switch (keycode) { // This will do most of the grunt work with the keycodes.
-    case ALT_TAB:
+    case WNEXT:
       if (record->event.pressed) {
         if (!is_alt_tab_active) {
           is_alt_tab_active = true;
-          register_code(KC_LALT);
+          register_code(keymap_config.swap_lctl_lgui ? KC_LGUI : KC_LALT);
         }
         alt_tab_timer = timer_read();
         register_code(KC_TAB);
@@ -38,46 +53,18 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
       }
       break;
 
-    case NEXTSEN:  // Next sentence macro.
+    case WPREV:
       if (record->event.pressed) {
-        SEND_STRING(". ");
-    #ifdef AUDIO_ENABLE
-        PLAY_SONG(caps_sound);
-    #endif
-        add_oneshot_mods(MOD_BIT(KC_LSFT));  // Set one-shot mod for shift.
+        if (!is_alt_tab_active) {
+          is_alt_tab_active = true;
+          register_code(keymap_config.swap_lctl_lgui ? KC_LGUI : KC_LALT);
+        }
+        alt_tab_timer = timer_read();
+        register_code16(S(KC_TAB));
+      } else {
+          unregister_code16(S(KC_TAB));
       }
-      return false;
-
-    case PREDL:  // Next sentence macro.
-      if (record->event.pressed) {
-        SEND_STRING("/ ");
-    #ifdef AUDIO_ENABLE
-        PLAY_SONG(caps_sound);
-    #endif
-        add_oneshot_mods(MOD_BIT(KC_LSFT));  // Set one-shot mod for shift.
-      }
-      return false;
-
-    case BRACES:
-            if (record->event.pressed) {
-                uint8_t shifted = get_mods() & (MOD_MASK_SHIFT);
-                    if (shifted) {
-                        unregister_code(KC_LSFT);
-                        unregister_code(KC_RSFT);
-                        SEND_STRING("{}"SS_TAP(X_LEFT));
-                    }
-                    else {
-                        SEND_STRING("[]"SS_TAP(X_LEFT));
-                    }
-            }
-            break;
-
-    case PARENTH:
-            if (record->event.pressed) {
-                SEND_STRING("()");
-                tap_code(KC_LEFT);
-            }
-          break;
+      break;
 
     case KC_CAPS:
       if (record->event.pressed) {
@@ -173,7 +160,7 @@ bool caps_word_press_user(uint16_t keycode) {
 void matrix_scan_kb(void) { // The very important timer.
   if (is_alt_tab_active) {
     if (timer_elapsed(alt_tab_timer) > 650) {
-      unregister_code(KC_LALT);
+      unregister_code(keymap_config.swap_lctl_lgui ? KC_LGUI : KC_LALT);
       is_alt_tab_active = false;
     }
   }
@@ -182,6 +169,9 @@ void matrix_scan_kb(void) { // The very important timer.
 }
 
 void keyboard_post_init_kb(void) {
+    kb_config.raw = eeconfig_read_kb();
+    set_ruen_toggle_mode(kb_config.ruen_toggle_mode);
+
 #ifdef RGBLIGHT_ENABLE
     keyboard_post_init_rgb();
 #endif
@@ -205,11 +195,8 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
     return state;
 }
 
-// for macropad
-__attribute__((weak)) void housekeeping_task_oled(void) {}
-
 void housekeeping_task_kb(void) {
-#ifdef OLED_ENABLE
+#if defined(OLED_ENABLE) && defined(SPLIT_KEYBOARD)
     housekeeping_task_oled();
 #endif
     housekeeping_task_ruen();
