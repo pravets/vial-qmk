@@ -40,6 +40,27 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
   // #endif
 
   switch (keycode) { // This will do most of the grunt work with the keycodes.
+    case EH_RESERV1:
+        tap_code16(KC_NUM);
+        wait_ms(10);
+        tap_code16(KC_NUM);
+      return false;
+    case EH_RESERV2:
+        tap_code16(KC_NUM);
+        wait_ms(20);
+        tap_code16(KC_NUM);
+      return false;
+    case EH_RESERV3:
+        tap_code16(KC_NUM);
+        wait_ms(10);
+        tap_code16(KC_NUM);
+        wait_ms(20);
+        tap_code16(KC_NUM);
+        wait_ms(20);
+        tap_code16(KC_NUM);
+        wait_ms(10);
+        tap_code16(KC_NUM);
+      return false;
     case WNEXT:
       if (record->event.pressed) {
         if (!is_alt_tab_active) {
@@ -51,7 +72,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
       } else {
         unregister_code(KC_TAB);
       }
-      break;
+      return false;
 
     case WPREV:
       if (record->event.pressed) {
@@ -64,7 +85,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
       } else {
           unregister_code16(S(KC_TAB));
       }
-      break;
+      return false;
 
     case KC_CAPS:
       if (record->event.pressed) {
