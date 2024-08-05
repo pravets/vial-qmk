@@ -1,5 +1,5 @@
 #pragma once
 
-#define VIAL_KEYBOARD_UID {0xBB, 0x17, 0xF0, 0x5B, 0x02, 0x80, 0x1D, 0x1D}
-#define VIAL_UNLOCK_COMBO_ROWS { 1, 1 }
-#define VIAL_UNLOCK_COMBO_COLS { 1, 2 }
+#define VIAL_KEYBOARD_UID {0xF1, 0xB3, 0x4C, 0x68, 0x6C, 0x25, 0xF1, 0x53}
+#define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
+#define VIAL_UNLOCK_COMBO_COLS { 5, 4 }
