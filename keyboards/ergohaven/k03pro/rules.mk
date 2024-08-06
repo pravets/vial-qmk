@@ -7,6 +7,9 @@ BOOTLOADER = rp2040
 # Build Options
 ENCODER_ENABLE = no
 
+POINTING_DEVICE_ENABLE = yes
+POINTING_DEVICE_DRIVER = azoteq_iqs5xx
+
 NKRO_ENABLE = yes
 BOOTMAGIC_ENABLE = yes
 MOUSEKEY_ENABLE = yes
@@ -29,7 +32,6 @@ RGBLIGHT_ENABLE = yes
 QUANTUM_PAINTER_ENABLE = yes
 QUANTUM_PAINTER_DRIVERS += st7789_spi
 QUANTUM_PAINTER_LVGL_INTEGRATION = yes
-RGBLIGHT_ENABLE = no
 RAW_ENABLE = yes
 
 SRC += keyboards/ergohaven/ergohaven_rgb.c
@@ -38,4 +40,4 @@ SRC += keyboards/ergohaven/ergohaven_ruen.c
 SRC += keyboards/ergohaven/hid.c
 SRC += lvgl_helpers.c
 SRC += display.c
-SRC += ergohaven_symbols.c
+# SRC += ergohaven_symbols.c

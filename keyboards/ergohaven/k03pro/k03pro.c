@@ -1,5 +1,20 @@
 #include "display.h"
 
+static bool display_enabled;
+
+bool is_display_side(void) {
+#ifdef K03_DISPLAY_RIGHT
+    return !is_keyboard_left();
+#endif
+#ifdef K03_DISPLAY_LEFT
+    return is_keyboard_left();
+#endif
+    return false;
+}
+
+bool is_display_enabled(void) {
+    return display_enabled;
+}
 
 void housekeeping_task_user(void) {
     if (is_display_enabled()) {
@@ -7,8 +22,16 @@ void housekeeping_task_user(void) {
     }
 }
 
+// void keyboard_post_init_user(void) {
+//     display_init_kb();
+// }
+
 void keyboard_post_init_user(void) {
-    display_init_kb();
+    display_enabled = false;
+
+    if (is_display_side()) {
+        display_enabled = display_init_kb();
+    }
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {

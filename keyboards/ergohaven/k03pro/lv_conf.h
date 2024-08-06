@@ -15,7 +15,7 @@
 #define LV_FONT_MONTSERRAT_14 0
 
 #undef LV_FONT_MONTSERRAT_28
-#define LV_FONT_MONTSERRAT_28 1
+#define LV_FONT_MONTSERRAT_28 0
 
 #undef LV_FONT_MONTSERRAT_20
 #define LV_FONT_MONTSERRAT_20 1
@@ -24,8 +24,8 @@
 #define LV_FONT_DEFAULT &lv_font_montserrat_20
 
 /* add large font */
-#undef LV_FONT_MONTSERRAT_40
-#define LV_FONT_MONTSERRAT_40 1
+#undef LV_FONT_MONTSERRAT_48
+#define LV_FONT_MONTSERRAT_48 1
 
 /* disable widgets*/
 #undef LV_USE_ANIMIMG
