@@ -32,6 +32,8 @@ void keyboard_post_init_user(void) {
     if (is_display_side()) {
         display_enabled = display_init_kb();
     }
+
+    pointing_device_set_cpi(800);
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
