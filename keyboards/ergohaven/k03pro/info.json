@@ -15,11 +15,6 @@
         "pid": "0x0070",
         "device_version": "1.0.0"
     },
-    "encoder": {
-        "rotary": [
-            {"pin_a": "GP27", "pin_b": "GP26"}
-        ]
-    },
     "rgb_matrix": {
         "driver": "ws2812"
     },

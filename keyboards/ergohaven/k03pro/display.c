@@ -710,12 +710,6 @@ uint16_t get_keycode(int layer, int row, int col) {
     return keycode;
 }
 
-uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
-    uint16_t keycode = dynamic_keymap_get_encoder(layer, encoder, clockwise);
-    if (keycode == KC_TRANSPARENT) keycode = dynamic_keymap_get_encoder(0, encoder, clockwise);
-    return keycode;
-}
-
 void display_process_layer_state(uint8_t layer) {
     const char *layer_name = get_layer_name(layer);
     lv_label_set_text(label_layer, layer_name);
@@ -727,10 +721,6 @@ void display_process_layer_state(uint8_t layer) {
             keycode = get_keycode(layer, i / 3 + 1, i % 3);
         else if (i == 13)
             keycode = get_keycode(layer, 0, 2);
-        else if (i == 12)
-            keycode = get_encoder_keycode(layer, 0, false);
-        else if (i == 14)
-            keycode = get_encoder_keycode(layer, 0, true);
         lv_label_set_text(key_labels[i], keycode_to_str(keycode));
     }
 }
