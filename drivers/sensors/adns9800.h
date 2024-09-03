@@ -67,3 +67,7 @@ uint16_t          adns9800_get_cpi(void);
 void              adns9800_set_cpi(uint16_t cpi);
 /* Reads and clears the current delta values on the ADNS sensor */
 report_adns9800_t adns9800_get_report(void);
+
+void adns9800_enable_laser(void);
+
+void adns9800_disable_laser(void);
