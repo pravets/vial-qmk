@@ -146,9 +146,7 @@ void adns9800_init(void) {
 
     wait_ms(10);
 
-    // enable laser
-    uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
-    adns9800_write(REG_LASER_CTRL0, laser_ctrl0 & 0xf0);
+    adns9800_enable_laser();
 
     adns9800_set_cpi(ADNS9800_CPI);
 }
@@ -219,30 +217,12 @@ report_adns9800_t adns9800_get_report(void) {
 
 void adns9800_enable_laser(void)
 {
-    // 1. Drive NCS high, then low to reset the SPI port.
-
-    // 2. Write 0x5a to Power_Up_Reset register (address 0x3a).
-    adns9800_write(REG_Power_Up_Reset, 0x5a);
-
-    // 3. Wait for at least 50 ms time.
-    wait_ms(50);
-
-    // 4. Clear observation register.
-
-    // 5. Wait at least one frame and check observation register, Bit[5:0] must be set.
-
-    // 6. Read from registers 0x02, 0x03, 0x04, 0x05 and 0x06 (or read these same 5 bytes from burst motion register) one time
-    // regardless of the motion pin state.
-
-    // 7. Enable laser by setting Forced_Disable bit (Bit-0) of LASER_CTRL0 register to 0.
     uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
     adns9800_write(REG_LASER_CTRL0, laser_ctrl0 & 0xf0);
-
-    // 8. Any register setting must then be reloaded.
-
 }
 
 void adns9800_disable_laser(void)
 {
-    adns9800_write(REG_Shutdown, 0xb6);
+    uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
+    adns9800_write(REG_LASER_CTRL0, laser_ctrl0 | 0x01);
 }

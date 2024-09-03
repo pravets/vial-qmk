@@ -95,14 +95,10 @@ bool led_update_user(led_t led_state) {
         if (sniper_enabled) div = get_sniper_div(vial_config.sniper_mode);
         pointing_device_set_cpi(base_dpi / div);
     }
-    if (scroll_enabled) {
+    if (scroll_enabled)
         adns9800_disable_laser();
-    } else
-    {
+    else
         adns9800_enable_laser();
-        int base_dpi   = get_dpi(vial_config.dpi_mode);
-        pointing_device_set_cpi(base_dpi);
-    }
 
     return true;
 }
