@@ -215,14 +215,20 @@ report_adns9800_t adns9800_get_report(void) {
     return report;
 }
 
-void adns9800_enable_laser(void)
-{
-    uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
-    adns9800_write(REG_LASER_CTRL0, laser_ctrl0 & 0xf0);
+static bool is_laser_enabled = false;
+
+void adns9800_enable_laser(void) {
+    if (!is_laser_enabled) {
+        uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
+        adns9800_write(REG_LASER_CTRL0, laser_ctrl0 & 0xf0);
+        is_laser_enabled = true;
+    }
 }
 
-void adns9800_disable_laser(void)
-{
-    uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
-    adns9800_write(REG_LASER_CTRL0, laser_ctrl0 | 0x01);
+void adns9800_disable_laser(void) {
+    if (is_laser_enabled) {
+        uint8_t laser_ctrl0 = adns9800_read(REG_LASER_CTRL0);
+        adns9800_write(REG_LASER_CTRL0, laser_ctrl0 | 0x01);
+        is_laser_enabled = false;
+    }
 }

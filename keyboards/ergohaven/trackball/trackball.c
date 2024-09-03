@@ -70,6 +70,13 @@ void via_set_layout_options_kb(uint32_t value) {
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    uint32_t elapsed = last_input_activity_elapsed();
+    if (elapsed > 10 * 1000) { // snooze after 10 s
+        if (elapsed % 1000 < 900) // disable laser for 900 ms
+            adns9800_disable_laser();
+        else
+            adns9800_enable_laser(); // enable laser for 100 ms
+    }
     if (scroll_enabled) {
         scroll_accumulated_h += mouse_report.x;
         scroll_accumulated_v -= mouse_report.y;
@@ -95,10 +102,6 @@ bool led_update_user(led_t led_state) {
         if (sniper_enabled) div = get_sniper_div(vial_config.sniper_mode);
         pointing_device_set_cpi(base_dpi / div);
     }
-    if (scroll_enabled)
-        adns9800_disable_laser();
-    else
-        adns9800_enable_laser();
 
     return true;
 }
