@@ -32,6 +32,7 @@ RAW_ENABLE = yes
 
 SRC += display.c
 SRC += lvgl_helpers.c
+SRC += infostart.c
 SRC += keyboards/ergohaven/ergohaven_keycode_str.c
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_rgb.c
