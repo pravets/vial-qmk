@@ -7,6 +7,7 @@
 #include "ergohaven.h"
 #include "ergohaven_symbols.h"
 
+LV_FONT_DECLARE(ergohaven_symbols_18);
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 LV_IMG_DECLARE(Infostart);
@@ -132,7 +133,7 @@ void init_screen_layout(void) {
 
         key_labels[i] = lv_label_create(obj);
         lv_obj_center(key_labels[i]);
-        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_20, LV_PART_MAIN);
+        lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_18, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
 
         if (i >= 12) {

@@ -20,6 +20,9 @@
 #undef LV_FONT_MONTSERRAT_20
 #define LV_FONT_MONTSERRAT_20 1
 
+#undef LV_FONT_MONTSERRAT_18
+#define LV_FONT_MONTSERRAT_18 1
+
 #undef LV_FONT_DEFAULT
 #define LV_FONT_DEFAULT &lv_font_montserrat_20
 

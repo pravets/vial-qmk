@@ -37,6 +37,7 @@ SRC += keyboards/ergohaven/ergohaven_keycode_str.c
 SRC += keyboards/ergohaven/ergohaven_main.c
 SRC += keyboards/ergohaven/ergohaven_rgb.c
 SRC += keyboards/ergohaven/ergohaven_ruen.c
+SRC += keyboards/ergohaven/ergohaven_symbols_18.c
 SRC += keyboards/ergohaven/ergohaven_symbols_20.c
 SRC += keyboards/ergohaven/ergohaven_symbols_28.c
 SRC += keyboards/ergohaven/hid.c
