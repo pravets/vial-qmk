@@ -23,6 +23,16 @@ static vial_config_t vial_config;
 
 static led_t leds;
 
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t : 7;
+        bool set_defaults : 1;
+    };
+} kb_config_t;
+
+kb_config_t kb_config;
+
 static int32_t scroll_divisor = 32;
 
 static bool scroll_enabled = false;
@@ -152,6 +162,20 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
     }
 
     return mrpt;
+}
+
+void via_init_kb(void) {
+    kb_config.raw = eeconfig_read_kb();
+    if (!kb_config.set_defaults) {
+        kb_config.set_defaults  = true;
+        vial_config.dpi_mode    = 7;
+        vial_config.orientation = ROT_0;
+        vial_config.mode        = NL_SCROLL_SL_SNIPER;
+        vial_config.sniper_mode = 0;
+        vial_config.scroll_mode = 5;
+        via_set_layout_options(vial_config.raw);
+        eeconfig_update_kb(kb_config.raw);
+    }
 }
 
 void pointing_device_init_kb(void) {
