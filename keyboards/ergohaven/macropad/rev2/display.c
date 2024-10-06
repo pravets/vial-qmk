@@ -6,15 +6,13 @@
 #include "hid.h"
 #include "ergohaven.h"
 #include "ergohaven_symbols.h"
+#include "ergohaven_display.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 LV_IMG_DECLARE(ergohaven_logo);
 
 static uint32_t screen_timer = 0;
-
-static bool display_enabled = false;
-static bool is_display_on   = false;
 
 typedef enum {
     SCREEN_OFF = -1,
@@ -26,8 +24,6 @@ typedef enum {
 
 static screen_t screen_state        = SCREEN_OFF;
 static screen_t change_screen_state = SCREEN_OFF;
-
-static painter_device_t display;
 
 /* shared styles */
 lv_style_t style_screen;
@@ -58,13 +54,7 @@ static lv_obj_t *label_layer_small;
 static lv_obj_t *arc_volume;
 static lv_obj_t *label_volume_arc;
 
-static lv_color_t accent_color_red;
-static lv_color_t accent_color_blue;
-
 /* public function to be used in keymaps */
-bool is_display_enabled(void) {
-    return display_enabled;
-}
 
 void init_styles(void) {
     lv_style_init(&style_screen);
@@ -228,37 +218,20 @@ void init_screen_volume(void) {
     lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
 }
 
-bool display_init_kb(void) {
-    display_enabled = false;
-    dprint("display_init_kb - start\n");
-
-    gpio_set_pin_output(GP17);
-
-    display = qp_st7789_make_spi_device(240, 280, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 16, 3);
-    qp_set_viewport_offsets(display, 0, 20);
-
-    accent_color_red  = lv_color_make(248, 83, 107);
-    accent_color_blue = lv_color_make(84, 189, 191);
-
-    if (!qp_init(display, QP_ROTATION_180) || !qp_lvgl_attach(display)) return display_enabled;
-
-    dprint("display_init_kb - initialised\n");
-
+void display_init_styles_kb(void) {
     lv_disp_t  *lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, accent_color_blue, accent_color_red, true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
+}
 
+void display_init_screens_kb(void) {
     init_screen_splash();
     init_screen_layout();
     init_screen_hid();
     init_screen_volume();
-    display_enabled = true;
-
     display_process_layer_state(layer_state);
     change_screen_state = SCREEN_SPLASH;
-
-    return display_enabled;
 }
 
 bool display_process_hid_data(struct hid_data_t *hid_data) {
@@ -334,7 +307,7 @@ uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
 static int update_layer_index = 0;
 
 void display_process_layer_state(uint8_t layer) {
-    if (!display_enabled) return;
+    if (!is_display_enabled()) return;
 
     change_screen_state = SCREEN_LAYOUT;
 
@@ -390,7 +363,7 @@ void update_screen_state(void) {
 }
 
 void display_housekeeping_task(void) {
-    if (!display_enabled) return;
+    if (!is_display_enabled()) return;
 
     update_layer_task();
 
@@ -447,22 +420,6 @@ void display_housekeeping_task(void) {
     if (change_screen_state != screen_state) {
         update_screen_state();
         return;
-    }
-}
-
-void display_turn_on(void) {
-    if (!is_display_on) {
-        gpio_write_pin_high(GP17);
-        qp_power(display, true);
-        is_display_on = true;
-    }
-}
-
-void display_turn_off(void) {
-    if (is_display_on) {
-        is_display_on = false;
-        qp_power(display, false);
-        gpio_write_pin_low(GP17);
     }
 }
 
