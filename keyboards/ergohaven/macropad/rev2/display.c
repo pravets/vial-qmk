@@ -25,12 +25,6 @@ typedef enum {
 static screen_t screen_state        = SCREEN_OFF;
 static screen_t change_screen_state = SCREEN_OFF;
 
-/* shared styles */
-lv_style_t style_screen;
-lv_style_t style_container;
-lv_style_t style_button;
-lv_style_t style_button_active;
-
 /* screens */
 static lv_obj_t *screen_splash;
 static lv_obj_t *screen_hid;
@@ -55,34 +49,6 @@ static lv_obj_t *arc_volume;
 static lv_obj_t *label_volume_arc;
 
 /* public function to be used in keymaps */
-
-void init_styles(void) {
-    lv_style_init(&style_screen);
-    lv_style_set_bg_color(&style_screen, lv_color_black());
-
-    lv_style_init(&style_container);
-    lv_style_set_pad_top(&style_container, 0);
-    lv_style_set_pad_bottom(&style_container, 0);
-    lv_style_set_pad_left(&style_container, 0);
-    lv_style_set_pad_right(&style_container, 0);
-    lv_style_set_bg_opa(&style_container, 0);
-    lv_style_set_border_width(&style_container, 0);
-    lv_style_set_width(&style_container, lv_pct(100));
-    lv_style_set_height(&style_container, LV_SIZE_CONTENT);
-
-    lv_style_init(&style_button);
-    lv_style_set_pad_top(&style_button, 4);
-    lv_style_set_pad_bottom(&style_button, 4);
-    lv_style_set_pad_left(&style_button, 4);
-    lv_style_set_pad_right(&style_button, 4);
-    lv_style_set_radius(&style_button, 6);
-    lv_style_set_text_color(&style_button, accent_color_blue);
-
-    lv_style_init(&style_button_active);
-    lv_style_set_bg_color(&style_button_active, accent_color_blue);
-    lv_style_set_bg_opa(&style_button_active, LV_OPA_100);
-    lv_style_set_text_color(&style_button_active, lv_color_black());
-}
 
 void init_screen_layout(void) {
     screen_layout = lv_obj_create(NULL);
@@ -216,13 +182,6 @@ void init_screen_volume(void) {
     lv_obj_t *volume_text_label = lv_label_create(screen_volume);
     lv_label_set_text(volume_text_label, "Volume");
     lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
-}
-
-void display_init_styles_kb(void) {
-    lv_disp_t  *lv_display = lv_disp_get_default();
-    lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, accent_color_blue, accent_color_red, true, LV_FONT_DEFAULT);
-    lv_disp_set_theme(lv_display, lv_theme);
-    init_styles();
 }
 
 void display_init_screens_kb(void) {
