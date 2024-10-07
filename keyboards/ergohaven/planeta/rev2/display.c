@@ -4,12 +4,9 @@
 #include "ergohaven_ruen.h"
 #include "hid.h"
 #include "ergohaven.h"
+#include "ergohaven_display.h"
 
 static uint16_t home_screen_timer = 0;
-
-static bool display_enabled;
-
-static painter_device_t display;
 
 /* shared styles */
 lv_style_t style_screen;
@@ -42,11 +39,6 @@ static lv_obj_t *label_volume_arc;
 /* media screen content */
 static lv_obj_t *label_media_artist;
 static lv_obj_t *label_media_title;
-
-/* public function to be used in keymaps */
-bool is_display_enabled(void) {
-    return display_enabled;
-}
 
 void init_styles(void) {
     lv_style_init(&style_screen);
@@ -98,7 +90,7 @@ void init_screen_home(void) {
     label_shift = create_button(mods, "SFT", &style_button, &style_button_active);
 
     label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
-    label_num = create_button(mods, "NUM", &style_button, &style_button_active);
+    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_home);
     lv_obj_add_style(bottom_row, &style_container, 0);
@@ -154,31 +146,17 @@ void init_screen_media(void) {
     lv_obj_set_style_text_align(label_media_title, LV_TEXT_ALIGN_CENTER, 0);
 }
 
-bool display_init_kb(void) {
-    display_enabled = false;
-    dprint("display_init_kb - start\n");
-
-    gpio_set_pin_output(GP18);
-    gpio_write_pin_high(GP18);
-
-    display = qp_st7789_make_spi_device(240, 280, LCD_CS_PIN, LCD_DC_PIN, LCD_RST_PIN, 16, 3);
-    qp_set_viewport_offsets(display, 0, 20);
-
-    if (!qp_init(display, QP_ROTATION_180) || !qp_power(display, true) || !qp_lvgl_attach(display)) return display_enabled;
-
-    dprint("display_init_kb - initialised\n");
-
+void display_init_styles_kb(void) {
     lv_disp_t  *lv_display = lv_disp_get_default();
     lv_theme_t *lv_theme   = lv_theme_default_init(lv_display, lv_palette_main(LV_PALETTE_TEAL), lv_palette_main(LV_PALETTE_BLUE), true, LV_FONT_DEFAULT);
     lv_disp_set_theme(lv_display, lv_theme);
     init_styles();
+}
 
+void display_init_screens_kb(void) {
     init_screen_home();
     init_screen_volume();
     init_screen_media();
-    display_enabled = true;
-
-    return display_enabled;
 }
 
 void set_layout_label(uint8_t layout) {
@@ -237,7 +215,7 @@ void display_housekeeping_task(void) {
         lv_scr_load(screen_home);
     }
 
-    if (last_input_activity_elapsed() > EH_TIMEOUT ) {
+    if (last_input_activity_elapsed() > EH_TIMEOUT) {
         rgblight_suspend();
         gpio_write_pin_low(GP18);
         qp_power(display, false);
