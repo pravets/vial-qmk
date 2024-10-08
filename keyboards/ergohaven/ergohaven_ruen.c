@@ -1,5 +1,6 @@
 #include "ergohaven_ruen.h"
 #include "hid.h"
+#include "print.h"
 
 static uint8_t cur_lang = LANG_EN;
 
@@ -16,6 +17,7 @@ static bool should_revert_ru = false;
 static bool english_word = false;
 
 void set_lang(uint8_t lang) {
+    dprintf("set_lang %d", lang);
     switch (tg_mode) {
         case TG_DEFAULT:
             if (cur_lang == lang) return;
