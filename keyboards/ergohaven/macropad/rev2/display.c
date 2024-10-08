@@ -193,7 +193,7 @@ void display_init_screens_kb(void) {
     change_screen_state = SCREEN_SPLASH;
 }
 
-bool display_process_hid_data(struct hid_data_t *hid_data) {
+bool display_process_hid_data(hid_data_t *hid_data) {
     static uint32_t hid_sync_time = 0;
     bool            new_hid_data  = false;
 
@@ -326,7 +326,7 @@ void display_housekeeping_task(void) {
 
     update_layer_task();
 
-    struct hid_data_t *hid_data   = get_hid_data();
+    hid_data_t *hid_data   = get_hid_data();
     bool               hid_active = display_process_hid_data(hid_data);
     static uint8_t     prev_lang  = 0;
     uint8_t            cur_lang   = get_cur_lang();

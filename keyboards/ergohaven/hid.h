@@ -1,6 +1,8 @@
+#pragma once
+
 #include <stdint.h>
 
-struct hid_data_t {
+typedef struct {
     uint8_t hours;
     uint8_t minutes;
     bool    time_changed;
@@ -12,8 +14,8 @@ struct hid_data_t {
     bool    media_artist_changed;
     char    media_title[32];
     bool    media_title_changed;
-};
+} hid_data_t;
 
-struct hid_data_t* get_hid_data(void);
+hid_data_t* get_hid_data(void);
 
 void keyboard_post_init_hid(void);

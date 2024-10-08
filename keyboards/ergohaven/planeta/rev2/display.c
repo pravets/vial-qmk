@@ -135,7 +135,7 @@ void start_home_screen_timer(void) {
     home_screen_timer = timer_read();
 }
 
-void display_process_hid_data(struct hid_data_t *hid_data) {
+void display_process_hid_data(hid_data_t *hid_data) {
     dprintf("display_process_hid_data");
     if (hid_data->time_changed) {
         lv_label_set_text_fmt(label_time, "%02d:%02d", hid_data->hours, hid_data->minutes);
@@ -187,7 +187,7 @@ void display_housekeeping_task(void) {
     toggle_state(label_ctrl, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_CTRL);
     toggle_state(label_alt, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_ALT);
     toggle_state(label_gui, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_GUI);
-    struct hid_data_t *hid_data = get_hid_data();
+    hid_data_t *hid_data = get_hid_data();
     display_process_hid_data(hid_data);
     set_layout_label(get_cur_lang());
 }

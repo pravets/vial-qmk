@@ -2,9 +2,9 @@
 #include <string.h>
 #include "via.h"
 
-static struct hid_data_t hid_data;
+static hid_data_t hid_data;
 
-struct hid_data_t *get_hid_data(void) {
+hid_data_t *get_hid_data(void) {
     return &hid_data;
 }
 

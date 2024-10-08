@@ -252,7 +252,7 @@ void render_media_ver(void) {
     static uint32_t volume_changed_stamp = 0;
     static uint32_t time_changed_stamp   = 0;
 
-    struct hid_data_t* hid_data = get_hid_data();
+    hid_data_t* hid_data = get_hid_data();
     if (hid_data->volume_changed) {
         volume_changed_stamp     = timer_read32();
         hid_data->volume_changed = false;
@@ -274,7 +274,7 @@ void render_media_ver(void) {
 void render_media_hor(void) {
     const int LINE_LEN = 21;
 
-    struct hid_data_t* hid_data = get_hid_data();
+    hid_data_t* hid_data = get_hid_data();
     if (hid_data->media_artist_changed || hid_data->media_title_changed) {
         char title_buf[LINE_LEN + 1];
         int  title_len   = strlen(hid_data->media_title);
