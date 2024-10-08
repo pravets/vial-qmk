@@ -176,13 +176,11 @@ void display_housekeeping_task(void) {
 
     if (last_input_activity_elapsed() > EH_TIMEOUT) {
         rgblight_suspend();
-        gpio_write_pin_low(GP18);
-        qp_power(display, false);
+        display_turn_off();
         return;
     } else {
         rgblight_wakeup();
-        gpio_write_pin_high(GP18);
-        qp_power(display, true);
+        display_turn_on();
     }
 
     toggle_state(label_shift, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT);

@@ -2,8 +2,6 @@
 
 #include "qp.h"
 
-extern painter_device_t display;
-
 extern lv_color_t accent_color_red;
 extern lv_color_t accent_color_blue;
 
