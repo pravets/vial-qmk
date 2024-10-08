@@ -27,7 +27,6 @@ static screen_t change_screen_state = SCREEN_OFF;
 /* screens */
 static lv_obj_t *screen_hid;
 static lv_obj_t *screen_layout;
-static lv_obj_t *screen_volume;
 
 /* hid screen content */
 static lv_obj_t *label_time;
@@ -40,10 +39,6 @@ static lv_obj_t *label_layout;
 /* layout screen content */
 static lv_obj_t *key_labels[15];
 static lv_obj_t *label_layer_small;
-
-/* volume screen content */
-static lv_obj_t *arc_volume;
-static lv_obj_t *label_volume_arc;
 
 /* public function to be used in keymaps */
 
@@ -148,29 +143,11 @@ void init_screen_hid(void) {
     lv_obj_set_style_text_color(label_media_artist, accent_color_blue, 0);
 }
 
-void init_screen_volume(void) {
-    screen_volume = lv_obj_create(NULL);
-    lv_obj_add_style(screen_volume, &style_screen, 0);
-
-    arc_volume = lv_arc_create(screen_volume);
-    lv_obj_set_size(arc_volume, 200, 200);
-    lv_obj_center(arc_volume);
-
-    label_volume_arc = lv_label_create(screen_volume);
-    lv_label_set_text(label_volume_arc, "00");
-    lv_obj_set_style_text_font(label_volume_arc, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_center(label_volume_arc);
-
-    lv_obj_t *volume_text_label = lv_label_create(screen_volume);
-    lv_label_set_text(volume_text_label, "Volume");
-    lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
-}
-
 void display_init_screens_kb(void) {
     eh_screen_splash.init();
     init_screen_layout();
     init_screen_hid();
-    init_screen_volume();
+    eh_screen_volume.init();
     display_process_layer_state(layer_state);
     change_screen_state = SCREEN_SPLASH;
 }
@@ -186,8 +163,7 @@ bool display_process_hid_data(hid_data_t *hid_data) {
         new_hid_data           = true;
     }
     if (hid_data->volume_changed) {
-        lv_label_set_text_fmt(label_volume_arc, "%02d", hid_data->volume);
-        lv_arc_set_value(arc_volume, hid_data->volume);
+        eh_screen_volume.update_hid(hid_data);
         change_screen_state      = SCREEN_VOLUME;
         hid_data->volume_changed = false;
         new_hid_data             = true;
@@ -294,7 +270,7 @@ void update_screen_state(void) {
             display_turn_on();
             break;
         case SCREEN_VOLUME:
-            lv_scr_load(screen_volume);
+            eh_screen_volume.load();
             display_turn_on();
             break;
         case SCREEN_OFF:
