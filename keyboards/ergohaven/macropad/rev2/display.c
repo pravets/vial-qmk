@@ -10,7 +10,6 @@
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
-LV_IMG_DECLARE(ergohaven_logo);
 
 static uint32_t screen_timer = 0;
 
@@ -26,11 +25,9 @@ static screen_t screen_state        = SCREEN_OFF;
 static screen_t change_screen_state = SCREEN_OFF;
 
 /* screens */
-static lv_obj_t *screen_splash;
 static lv_obj_t *screen_hid;
 static lv_obj_t *screen_layout;
 static lv_obj_t *screen_volume;
-static lv_obj_t *label_version;
 
 /* hid screen content */
 static lv_obj_t *label_time;
@@ -98,21 +95,6 @@ void init_screen_layout(void) {
             lv_obj_set_style_text_color(key_labels[i], accent_color_blue, 0);
         }
     }
-}
-
-void init_screen_splash(void) {
-    screen_splash = lv_obj_create(NULL);
-    lv_obj_add_style(screen_splash, &style_screen, 0);
-    use_flex_column(screen_splash);
-
-    lv_obj_t *img = lv_img_create(screen_splash);
-    lv_img_set_src(img, &ergohaven_logo);
-    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
-    lv_obj_set_style_pad_top(img, 60, 0);
-    lv_obj_set_style_pad_bottom(img, 60, 0);
-
-    label_version = lv_label_create(screen_splash);
-    lv_label_set_text(label_version, "v" EH_VERSION_STR);
 }
 
 void init_screen_hid(void) {
@@ -185,7 +167,7 @@ void init_screen_volume(void) {
 }
 
 void display_init_screens_kb(void) {
-    init_screen_splash();
+    eh_screen_splash.init();
     init_screen_layout();
     init_screen_hid();
     init_screen_volume();
@@ -300,7 +282,7 @@ void update_screen_state(void) {
     screen_state = change_screen_state;
     switch (screen_state) {
         case SCREEN_SPLASH:
-            lv_scr_load(screen_splash);
+            eh_screen_splash.load();
             display_turn_on();
             break;
         case SCREEN_HID:
@@ -326,10 +308,10 @@ void display_housekeeping_task(void) {
 
     update_layer_task();
 
-    hid_data_t *hid_data   = get_hid_data();
-    bool               hid_active = display_process_hid_data(hid_data);
-    static uint8_t     prev_lang  = 0;
-    uint8_t            cur_lang   = get_cur_lang();
+    hid_data_t    *hid_data   = get_hid_data();
+    bool           hid_active = display_process_hid_data(hid_data);
+    static uint8_t prev_lang  = 0;
+    uint8_t        cur_lang   = get_cur_lang();
     set_layout_label(cur_lang);
     if (prev_lang != cur_lang) {
         change_screen_state = SCREEN_HID;

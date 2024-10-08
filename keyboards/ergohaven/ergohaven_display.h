@@ -1,6 +1,7 @@
 #pragma once
 
 #include "qp.h"
+#include "hid.h"
 
 extern lv_color_t accent_color_red;
 extern lv_color_t accent_color_blue;
@@ -21,3 +22,16 @@ void display_turn_on(void);
 void display_turn_off(void);
 
 bool is_display_enabled(void);
+
+typedef struct {
+    void (*init)(void);
+    void (*load)(void);
+    void (*update_hid)(hid_data_t *hid);
+    void (*update_layout)(uint8_t layout);
+    void (*update_layer)(uint8_t layer);
+    void (*update_leds)(led_t led_state);
+    void (*update_mods)(uint8_t layout);
+    void (*housekeep)(void);
+} eh_screen_t;
+
+extern const eh_screen_t eh_screen_splash;

@@ -1,4 +1,6 @@
 #include "ergohaven_display.h"
+#include "ergohaven.h"
+#include "lvgl_helpers.h"
 #include "gpio.h"
 
 painter_device_t display;
@@ -91,3 +93,49 @@ void display_turn_off(void) {
         gpio_write_pin_low(EH_DISPLAY_BACKLIGHT_PIN);
     }
 }
+
+/* Screen helpers */
+
+void dummy_update_hid(hid_data_t *hid) {}
+void dummy_update_layout(uint8_t layout) {}
+void dummy_update_layer(uint8_t layer) {}
+void dummy_update_leds(led_t led_state) {}
+void dummy_update_mods(uint8_t layout) {}
+void dummy_housekeep(void) {}
+
+/* Screen splash */
+
+static lv_obj_t *screen_splash;
+static lv_obj_t *label_version;
+
+LV_IMG_DECLARE(ergohaven_logo);
+
+void init_screen_splash(void) {
+    screen_splash = lv_obj_create(NULL);
+    lv_obj_add_style(screen_splash, &style_screen, 0);
+    use_flex_column(screen_splash);
+
+    lv_obj_t *img = lv_img_create(screen_splash);
+    lv_img_set_src(img, &ergohaven_logo);
+    lv_obj_align(img, LV_ALIGN_CENTER, 0, 0);
+    lv_obj_set_style_pad_top(img, 60, 0);
+    lv_obj_set_style_pad_bottom(img, 60, 0);
+
+    label_version = lv_label_create(screen_splash);
+    lv_label_set_text(label_version, "v" EH_VERSION_STR);
+}
+
+void load_screen_splash(void) {
+    lv_scr_load(screen_splash);
+}
+
+const eh_screen_t eh_screen_splash = {
+    .init          = init_screen_splash,
+    .load          = load_screen_splash,
+    .update_hid    = dummy_update_hid,
+    .update_layout = dummy_update_layout,
+    .update_layer  = dummy_update_layer,
+    .update_leds   = dummy_update_leds,
+    .update_mods   = dummy_update_mods,
+    .housekeep     = dummy_housekeep,
+};
