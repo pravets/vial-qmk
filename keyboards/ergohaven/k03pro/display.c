@@ -11,7 +11,6 @@ static uint16_t home_screen_timer = 0;
 
 /* screens */
 static lv_obj_t *screen_home;
-static lv_obj_t *screen_volume;
 static lv_obj_t *screen_media;
 
 /* home screen content */
@@ -26,10 +25,6 @@ static lv_obj_t *label_caps;
 static lv_obj_t *label_num;
 static lv_obj_t *label_layout;
 static lv_obj_t *label_version;
-
-/* volume screen content */
-static lv_obj_t *arc_volume;
-static lv_obj_t *label_volume_arc;
 
 /* media screen content */
 static lv_obj_t *label_media_artist;
@@ -76,24 +71,6 @@ void init_screen_home(void) {
     lv_label_set_text(label_version, "v" EH_VERSION_STR);
 }
 
-void init_screen_volume(void) {
-    screen_volume = lv_obj_create(NULL);
-    lv_obj_add_style(screen_volume, &style_screen, 0);
-
-    arc_volume = lv_arc_create(screen_volume);
-    lv_obj_set_size(arc_volume, 200, 200);
-    lv_obj_center(arc_volume);
-
-    label_volume_arc = lv_label_create(screen_volume);
-    lv_label_set_text(label_volume_arc, "00");
-    lv_obj_set_style_text_font(label_volume_arc, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_center(label_volume_arc);
-
-    lv_obj_t *volume_text_label = lv_label_create(screen_volume);
-    lv_label_set_text(volume_text_label, "Volume");
-    lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
-}
-
 void init_screen_media(void) {
     screen_media = lv_obj_create(NULL);
     lv_obj_add_style(screen_media, &style_screen, 0);
@@ -115,7 +92,7 @@ void init_screen_media(void) {
 
 void display_init_screens_kb(void) {
     init_screen_home();
-    init_screen_volume();
+    eh_screen_volume.init();
     init_screen_media();
     display_turn_on();
 }
@@ -145,9 +122,8 @@ void display_process_hid_data(hid_data_t *hid_data) {
     }
     if (hid_data->volume_changed) {
         lv_label_set_text_fmt(label_volume_home, "Vol: %02d%%", hid_data->volume);
-        lv_label_set_text_fmt(label_volume_arc, "%02d", hid_data->volume);
-        lv_arc_set_value(arc_volume, hid_data->volume);
-        lv_scr_load(screen_volume);
+        eh_screen_volume.update_hid(hid_data);
+        eh_screen_volume.load();
         start_home_screen_timer();
         hid_data->volume_changed = false;
     }
