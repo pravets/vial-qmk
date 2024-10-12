@@ -82,10 +82,7 @@ oled_rotation_t oled_init_user(oled_rotation_t rotation) {
 void render_status_classic(void) {
     // Print current mode
     oled_clear();
-    if (strlen(PRODUCT) <= 5)
-        oled_write_P(PSTR(PRODUCT), false);
-    else
-        oled_write_P("I44", false); // Imperial44 is too long name
+    oled_write_P(EH_SHORT_PRODUCT_NAME, false);
 
     oled_set_cursor(0, 2);
     oled_write_P(PSTR(EH_VERSION_STR), false);

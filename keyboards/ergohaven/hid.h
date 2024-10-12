@@ -3,6 +3,7 @@
 #include <stdint.h>
 
 typedef struct {
+    bool hid_changed;
     uint8_t hours;
     uint8_t minutes;
     bool    time_changed;

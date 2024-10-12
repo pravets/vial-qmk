@@ -3,6 +3,10 @@
 
 #define EH_VERSION_STR "3.7.8"
 
+#ifndef EH_SHORT_PRODUCT_NAME
+#    define EH_SHORT_PRODUCT_NAME PRODUCT
+#endif
+
 #define _BASE 0
 #define _LOWER 1
 #define _RAISE 2

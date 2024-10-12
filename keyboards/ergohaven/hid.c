@@ -24,6 +24,7 @@ void read_string(uint8_t *data, char *string_data) {
 
 bool process_raw_hid_data(uint8_t *data, uint8_t length) {
     uint8_t data_type = data[0];
+    hid_data.hid_changed = true;
     switch (data_type) {
         case _TIME:
             hid_data.hours        = data[1];

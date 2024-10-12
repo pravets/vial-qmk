@@ -9,66 +9,11 @@
 static uint16_t home_screen_timer = 0;
 
 /* screens */
-static lv_obj_t *screen_home;
 static lv_obj_t *screen_media;
-
-/* home screen content */
-static lv_obj_t *label_time;
-static lv_obj_t *label_volume_home;
-static lv_obj_t *label_shift;
-static lv_obj_t *label_ctrl;
-static lv_obj_t *label_alt;
-static lv_obj_t *label_gui;
-static lv_obj_t *label_layer;
-static lv_obj_t *label_caps;
-static lv_obj_t *label_num;
-static lv_obj_t *label_layout;
-static lv_obj_t *label_version;
 
 /* media screen content */
 static lv_obj_t *label_media_artist;
 static lv_obj_t *label_media_title;
-
-void init_screen_home(void) {
-    screen_home = lv_scr_act();
-    lv_obj_add_style(screen_home, &style_screen, 0);
-    use_flex_column(screen_home);
-
-    label_volume_home = lv_label_create(screen_home);
-    lv_label_set_text(label_volume_home, "Ergohaven");
-
-    label_time = lv_label_create(screen_home);
-    lv_label_set_text(label_time, "Planeta");
-    lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
-
-    lv_obj_t *mods = lv_obj_create(screen_home);
-    lv_obj_add_style(mods, &style_container, 0);
-    use_flex_row(mods);
-
-    label_gui   = create_button(mods, "GUI", &style_button, &style_button_active);
-    label_alt   = create_button(mods, "ALT", &style_button, &style_button_active);
-    label_ctrl  = create_button(mods, "CTL", &style_button, &style_button_active);
-    label_shift = create_button(mods, "SFT", &style_button, &style_button_active);
-
-    label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
-    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
-
-    lv_obj_t *bottom_row = lv_obj_create(screen_home);
-    lv_obj_add_style(bottom_row, &style_container, 0);
-    use_flex_row(bottom_row);
-
-    label_layer = lv_label_create(bottom_row);
-    lv_label_set_text(label_layer, "");
-    lv_obj_align(label_layer, LV_ALIGN_LEFT_MID, 20, 0);
-    display_process_layer_state(0);
-
-    label_layout = lv_label_create(bottom_row);
-    lv_label_set_text(label_layout, "");
-    lv_obj_align(label_layout, LV_ALIGN_RIGHT_MID, -20, 0);
-
-    label_version = lv_label_create(screen_home);
-    lv_label_set_text(label_version, "v" EH_VERSION_STR);
-}
 
 void init_screen_media(void) {
     screen_media = lv_obj_create(NULL);
@@ -90,22 +35,10 @@ void init_screen_media(void) {
 }
 
 void display_init_screens_kb(void) {
-    init_screen_home();
+    eh_screen_home.init();
     eh_screen_volume.init();
     init_screen_media();
     display_turn_on();
-}
-
-void set_layout_label(uint8_t layout) {
-    switch (layout) {
-        case LANG_EN:
-            lv_label_set_text(label_layout, "EN");
-            break;
-
-        case LANG_RU:
-            lv_label_set_text(label_layout, "RU");
-            break;
-    }
 }
 
 void start_home_screen_timer(void) {
@@ -115,13 +48,16 @@ void start_home_screen_timer(void) {
 
 void display_process_hid_data(hid_data_t *hid_data) {
     dprintf("display_process_hid_data");
+    if (!hid_data->hid_changed) return;
+    hid_data->hid_changed = false;
+
+    eh_screen_volume.update_hid(hid_data);
+    eh_screen_home.update_hid(hid_data);
+
     if (hid_data->time_changed) {
-        lv_label_set_text_fmt(label_time, "%02d:%02d", hid_data->hours, hid_data->minutes);
         hid_data->time_changed = false;
     }
     if (hid_data->volume_changed) {
-        lv_label_set_text_fmt(label_volume_home, "Vol: %02d%%", hid_data->volume);
-        eh_screen_volume.update_hid(hid_data);
         eh_screen_volume.load();
         start_home_screen_timer();
         hid_data->volume_changed = false;
@@ -142,13 +78,13 @@ void display_process_hid_data(hid_data_t *hid_data) {
 
 void display_process_layer_state(uint8_t layer) {
     if (!is_display_enabled()) return;
-    lv_label_set_text(label_layer, layer_upper_name(layer));
+    eh_screen_home.update_layer(layer);
 }
 
 void display_housekeeping_task(void) {
     if (home_screen_timer && timer_elapsed(home_screen_timer) > 5000) {
         home_screen_timer = 0;
-        lv_scr_load(screen_home);
+        eh_screen_home.load();
     }
 
     if (last_input_activity_elapsed() > EH_TIMEOUT) {
@@ -160,20 +96,17 @@ void display_housekeeping_task(void) {
         display_turn_on();
     }
 
-    toggle_state(label_shift, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_SHIFT);
-    toggle_state(label_ctrl, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_CTRL);
-    toggle_state(label_alt, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_ALT);
-    toggle_state(label_gui, LV_STATE_PRESSED, (get_mods() | get_oneshot_mods()) & MOD_MASK_GUI);
+    uint8_t mods = get_mods() | get_oneshot_mods();
+    eh_screen_home.update_mods(mods);
     hid_data_t *hid_data = get_hid_data();
     display_process_hid_data(hid_data);
-    set_layout_label(get_cur_lang());
+    eh_screen_home.update_layout(get_cur_lang());
 }
 
 bool led_update_kb(led_t led_state) {
     bool res = led_update_user(led_state);
     if (res && is_display_enabled()) {
-        toggle_state(label_caps, LV_STATE_PRESSED, led_state.caps_lock);
-        toggle_state(label_num, LV_STATE_PRESSED, led_state.num_lock);
+        eh_screen_home.update_leds(led_state);
     }
 
     return res;

@@ -34,3 +34,5 @@
 #define TAP_CODE_DELAY 1
 
 #define EH_DISPLAY_BACKLIGHT_PIN GP18
+
+#define EH_SHORT_PRODUCT_NAME "Planeta"

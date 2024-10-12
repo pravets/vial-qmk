@@ -2,6 +2,7 @@
 #include "ergohaven.h"
 #include "lvgl_helpers.h"
 #include "gpio.h"
+#include "ergohaven_ruen.h"
 
 painter_device_t display;
 
@@ -181,5 +182,110 @@ const eh_screen_t eh_screen_volume = {
     .update_layer  = dummy_update_layer,
     .update_leds   = dummy_update_leds,
     .update_mods   = dummy_update_mods,
+    .housekeep     = dummy_housekeep,
+};
+
+/* Screen home */
+
+static lv_obj_t *screen_home;
+static lv_obj_t *label_time;
+static lv_obj_t *label_volume_home;
+static lv_obj_t *label_shift;
+static lv_obj_t *label_ctrl;
+static lv_obj_t *label_alt;
+static lv_obj_t *label_gui;
+static lv_obj_t *label_layer;
+static lv_obj_t *label_caps;
+static lv_obj_t *label_num;
+static lv_obj_t *label_layout;
+static lv_obj_t *label_version;
+
+void update_layer_home(uint8_t layer) {
+    lv_label_set_text(label_layer, layer_upper_name(layer));
+}
+
+void init_screen_home(void) {
+    screen_home = lv_scr_act();
+    lv_obj_add_style(screen_home, &style_screen, 0);
+    use_flex_column(screen_home);
+
+    label_volume_home = lv_label_create(screen_home);
+    lv_label_set_text(label_volume_home, "Ergohaven");
+
+    label_time = lv_label_create(screen_home);
+    lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
+    lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
+
+    lv_obj_t *mods = lv_obj_create(screen_home);
+    lv_obj_add_style(mods, &style_container, 0);
+    use_flex_row(mods);
+
+    label_gui   = create_button(mods, "GUI", &style_button, &style_button_active);
+    label_alt   = create_button(mods, "ALT", &style_button, &style_button_active);
+    label_ctrl  = create_button(mods, "CTL", &style_button, &style_button_active);
+    label_shift = create_button(mods, "SFT", &style_button, &style_button_active);
+
+    label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
+    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
+
+    lv_obj_t *bottom_row = lv_obj_create(screen_home);
+    lv_obj_add_style(bottom_row, &style_container, 0);
+    use_flex_row(bottom_row);
+
+    label_layer = lv_label_create(bottom_row);
+    lv_label_set_text(label_layer, "");
+    lv_obj_align(label_layer, LV_ALIGN_LEFT_MID, 20, 0);
+    update_layer_home(0);
+
+    label_layout = lv_label_create(bottom_row);
+    lv_label_set_text(label_layout, "");
+    lv_obj_align(label_layout, LV_ALIGN_RIGHT_MID, -20, 0);
+
+    label_version = lv_label_create(screen_home);
+    lv_label_set_text(label_version, "v" EH_VERSION_STR);
+}
+
+void load_screen_home(void) {
+    lv_scr_load(screen_home);
+}
+
+void update_hid_home(hid_data_t *hid) {
+    lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
+    lv_label_set_text_fmt(label_volume_home, "Vol: %02d%%", hid->volume);
+    lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
+}
+
+void update_layout_home(uint8_t layout) {
+    switch (layout) {
+        case LANG_EN:
+            lv_label_set_text(label_layout, "EN");
+            break;
+
+        case LANG_RU:
+            lv_label_set_text(label_layout, "RU");
+            break;
+    }
+}
+
+void update_leds_home(led_t led_state) {
+    toggle_state(label_caps, LV_STATE_PRESSED, led_state.caps_lock);
+    toggle_state(label_num, LV_STATE_PRESSED, led_state.num_lock);
+}
+
+void update_mods_home(uint8_t mods) {
+    toggle_state(label_shift, LV_STATE_PRESSED, mods & MOD_MASK_SHIFT);
+    toggle_state(label_ctrl, LV_STATE_PRESSED, mods & MOD_MASK_CTRL);
+    toggle_state(label_alt, LV_STATE_PRESSED, mods & MOD_MASK_ALT);
+    toggle_state(label_gui, LV_STATE_PRESSED, mods & MOD_MASK_GUI);
+}
+
+const eh_screen_t eh_screen_home = {
+    .init          = init_screen_home,
+    .load          = load_screen_home,
+    .update_hid    = update_hid_home,
+    .update_layout = update_layout_home,
+    .update_layer  = update_layer_home,
+    .update_leds   = update_leds_home,
+    .update_mods   = update_mods_home,
     .housekeep     = dummy_housekeep,
 };

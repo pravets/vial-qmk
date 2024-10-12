@@ -36,3 +36,4 @@ typedef struct {
 
 extern const eh_screen_t eh_screen_splash;
 extern const eh_screen_t eh_screen_volume;
+extern const eh_screen_t eh_screen_home;
