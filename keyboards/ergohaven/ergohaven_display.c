@@ -289,3 +289,96 @@ const eh_screen_t eh_screen_home = {
     .update_mods   = update_mods_home,
     .housekeep     = dummy_housekeep,
 };
+
+/* Screen hid */
+
+static lv_obj_t *screen_hid;
+static lv_obj_t *label_hid_time;
+static lv_obj_t *label_hid_layer;
+static lv_obj_t *label_hid_media_artist;
+static lv_obj_t *label_hid_media_title;
+static lv_obj_t *label_hid_layout;
+
+void init_screen_hid(void) {
+    screen_hid = lv_obj_create(NULL);
+    lv_obj_add_style(screen_hid, &style_screen, 0);
+    lv_obj_set_layout(screen_hid, LV_LAYOUT_FLEX);
+    lv_obj_set_flex_flow(screen_hid, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(screen_hid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_scrollbar_mode(screen_hid, LV_SCROLLBAR_MODE_OFF);
+
+    label_hid_time = lv_label_create(screen_hid);
+    lv_label_set_text(label_hid_time, "HH:MM");
+    lv_obj_set_style_text_font(label_hid_time, &lv_font_montserrat_48, LV_PART_MAIN);
+    lv_obj_set_style_pad_top(label_hid_time, 40, 0);
+    lv_obj_set_style_pad_bottom(label_hid_time, 20, 0);
+
+    lv_obj_t *bottom_row = lv_obj_create(screen_hid);
+    lv_obj_add_style(bottom_row, &style_container, 0);
+    use_flex_row(bottom_row);
+
+    label_hid_layer = lv_label_create(bottom_row);
+    lv_label_set_text(label_hid_layer, "");
+    lv_obj_set_size(label_hid_layer, 110, 20);
+    lv_obj_set_style_text_align(label_hid_layer, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(label_hid_layer, &ergohaven_symbols_20, LV_PART_MAIN);
+
+    label_hid_layout = lv_label_create(bottom_row);
+    lv_label_set_text(label_hid_layout, "");
+    lv_obj_set_size(label_hid_layout, 110, 20);
+    lv_obj_set_style_text_align(label_hid_layout, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(label_hid_layout, &ergohaven_symbols_20, LV_PART_MAIN);
+
+    label_hid_media_title = lv_label_create(screen_hid);
+    lv_label_set_text(label_hid_media_title, "");
+    lv_label_set_long_mode(label_hid_media_title, LV_LABEL_LONG_WRAP);
+    lv_obj_set_width(label_hid_media_title, lv_pct(95));
+    lv_obj_set_style_text_align(label_hid_media_title, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(label_hid_media_title, &ergohaven_symbols_28, LV_PART_MAIN);
+    lv_obj_set_style_pad_top(label_hid_media_title, 10, 0);
+    lv_obj_set_style_pad_bottom(label_hid_media_title, 0, 0);
+
+    label_hid_media_artist = lv_label_create(screen_hid);
+    lv_label_set_text(label_hid_media_artist, "");
+    lv_label_set_long_mode(label_hid_media_artist, LV_LABEL_LONG_WRAP);
+    lv_obj_set_width(label_hid_media_artist, lv_pct(95));
+    lv_obj_set_style_text_align(label_hid_media_artist, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(label_hid_media_artist, &ergohaven_symbols_20, LV_PART_MAIN);
+
+    lv_obj_set_style_pad_top(label_hid_media_artist, 0, 0);
+    lv_obj_set_style_pad_bottom(label_hid_media_artist, 20, 0);
+    lv_obj_set_style_text_color(label_hid_media_artist, accent_color_blue, 0);
+}
+
+void load_screen_hid(void) {
+    lv_scr_load(screen_hid);
+}
+
+void update_hid_hid(hid_data_t *hid) {
+    lv_label_set_text_fmt(label_hid_time, "%02d:%02d", hid->hours, hid->minutes);
+    lv_label_set_text(label_hid_media_artist, hid->media_artist);
+    lv_label_set_text(label_hid_media_title, hid->media_title);
+}
+
+void update_layout_hid(uint8_t layout) {
+    switch (layout) {
+        case LANG_EN:
+            lv_label_set_text(label_hid_layout, EH_SYMBOL_GLOBE " EN");
+            break;
+
+        case LANG_RU:
+            lv_label_set_text(label_hid_layout, EH_SYMBOL_GLOBE " RU");
+            break;
+    }
+}
+
+const eh_screen_t eh_screen_hid = {
+    .init          = init_screen_hid,
+    .load          = load_screen_hid,
+    .update_hid    = update_hid_hid,
+    .update_layout = update_layout_hid,
+    .update_layer  = update_layer_hid,
+    .update_leds   = update_leds_hid,
+    .update_mods   = update_mods_hid,
+    .housekeep     = dummy_housekeep,
+};
