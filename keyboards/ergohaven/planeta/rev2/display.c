@@ -101,13 +101,8 @@ void display_housekeeping_task(void) {
     hid_data_t *hid_data = get_hid_data();
     display_process_hid_data(hid_data);
     eh_screen_home.update_layout(get_cur_lang());
-}
 
-bool led_update_kb(led_t led_state) {
-    bool res = led_update_user(led_state);
-    if (res && is_display_enabled()) {
-        eh_screen_home.update_leds(led_state);
-    }
-
-    return res;
+    led_t led_state = host_keyboard_led_state();
+    led_state.caps_lock |= is_caps_word_on();
+    eh_screen_home.update_leds(led_state);
 }

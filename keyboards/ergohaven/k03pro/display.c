@@ -96,6 +96,7 @@ void display_housekeeping_task(void) {
     eh_screen_home.update_layout(get_cur_lang());
 
     led_t led_state = host_keyboard_led_state();
+    led_state.caps_lock |= get_caps_word();
     eh_screen_home.update_leds(led_state);
 
     display_process_layer_state(get_current_layer());
