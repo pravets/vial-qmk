@@ -231,14 +231,14 @@ static const char* PROGMEM LAYER_UPPER_NAME[] = {
     // clang-format on
 };
 
-const char* layer_name(int layer) {
+__attribute__((weak)) const char* layer_name(uint8_t layer) {
     if (layer >= 0 && layer <= 15)
         return LAYER_NAME[layer];
     else
         return "Undef";
 }
 
-const char* layer_upper_name(int layer) {
+__attribute__((weak)) const char* layer_upper_name(uint8_t layer) {
     if (layer >= 0 && layer <= 15)
         return LAYER_UPPER_NAME[layer];
     else

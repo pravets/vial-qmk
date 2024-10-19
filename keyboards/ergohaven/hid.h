@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 typedef struct {
-    bool hid_changed;
+    bool    hid_changed;
     uint8_t hours;
     uint8_t minutes;
     bool    time_changed;
@@ -20,3 +20,5 @@ typedef struct {
 hid_data_t* get_hid_data(void);
 
 void keyboard_post_init_hid(void);
+
+bool is_hid_active(void);

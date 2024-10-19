@@ -69,8 +69,8 @@ enum custom_keycodes {
 
 uint8_t get_current_layer(void);
 
-const char* layer_name(int layer);
+__attribute__((weak)) const char* layer_name(uint8_t layer);
 
-const char* layer_upper_name(int layer);
+__attribute__((weak)) const char* layer_upper_name(uint8_t layer);
 
 void kb_config_update_ruen_toggle_mode(uint8_t mode);

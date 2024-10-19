@@ -25,16 +25,7 @@ static screen_t screen_state        = SCREEN_OFF;
 static screen_t change_screen_state = SCREEN_OFF;
 
 /* screens */
-static lv_obj_t *screen_hid;
 static lv_obj_t *screen_layout;
-
-/* hid screen content */
-static lv_obj_t *label_time;
-static lv_obj_t *label_layer;
-static lv_obj_t *label_media_artist;
-static lv_obj_t *label_media_title;
-static lv_obj_t *label_layer;
-static lv_obj_t *label_layout;
 
 /* layout screen content */
 static lv_obj_t *key_labels[15];
@@ -92,116 +83,48 @@ void init_screen_layout(void) {
     }
 }
 
-void init_screen_hid(void) {
-    screen_hid = lv_obj_create(NULL);
-    lv_obj_add_style(screen_hid, &style_screen, 0);
-    lv_obj_set_layout(screen_hid, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(screen_hid, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(screen_hid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_scrollbar_mode(screen_hid, LV_SCROLLBAR_MODE_OFF);
-
-    label_time = lv_label_create(screen_hid);
-    lv_label_set_text(label_time, "HH:MM");
-    lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_time, 40, 0);
-    lv_obj_set_style_pad_bottom(label_time, 20, 0);
-
-    lv_obj_t *bottom_row = lv_obj_create(screen_hid);
-    lv_obj_add_style(bottom_row, &style_container, 0);
-    use_flex_row(bottom_row);
-
-    label_layer = lv_label_create(bottom_row);
-    lv_label_set_text(label_layer, "");
-    lv_obj_set_size(label_layer, 110, 20);
-    lv_obj_set_style_text_align(label_layer, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_layer, &ergohaven_symbols_20, LV_PART_MAIN);
-
-    label_layout = lv_label_create(bottom_row);
-    lv_label_set_text(label_layout, "");
-    lv_obj_set_size(label_layout, 110, 20);
-    lv_obj_set_style_text_align(label_layout, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_layout, &ergohaven_symbols_20, LV_PART_MAIN);
-
-    label_media_title = lv_label_create(screen_hid);
-    lv_label_set_text(label_media_title, "");
-    lv_label_set_long_mode(label_media_title, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(label_media_title, lv_pct(95));
-    lv_obj_set_style_text_align(label_media_title, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_media_title, &ergohaven_symbols_28, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_media_title, 10, 0);
-    lv_obj_set_style_pad_bottom(label_media_title, 0, 0);
-
-    label_media_artist = lv_label_create(screen_hid);
-    lv_label_set_text(label_media_artist, "");
-    lv_label_set_long_mode(label_media_artist, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(label_media_artist, lv_pct(95));
-    lv_obj_set_style_text_align(label_media_artist, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_media_artist, &ergohaven_symbols_20, LV_PART_MAIN);
-
-    lv_obj_set_style_pad_top(label_media_artist, 0, 0);
-    lv_obj_set_style_pad_bottom(label_media_artist, 20, 0);
-    lv_obj_set_style_text_color(label_media_artist, accent_color_blue, 0);
-}
-
 void display_init_screens_kb(void) {
     eh_screen_splash.init();
     init_screen_layout();
-    init_screen_hid();
+    eh_screen_hid.init();
     eh_screen_volume.init();
     display_process_layer_state(layer_state);
     change_screen_state = SCREEN_SPLASH;
 }
 
 bool display_process_hid_data(hid_data_t *hid_data) {
-    static uint32_t hid_sync_time = 0;
-    bool            new_hid_data  = false;
+    if (!hid_data->hid_changed) return is_hid_active();
 
-    dprintf("display_process_hid_data");
+    hid_data->hid_changed = false;
+
+    eh_screen_hid.update_hid(hid_data);
+
     if (hid_data->time_changed) {
-        lv_label_set_text_fmt(label_time, "%02d:%02d", hid_data->hours, hid_data->minutes);
         hid_data->time_changed = false;
-        new_hid_data           = true;
     }
     if (hid_data->volume_changed) {
         eh_screen_volume.update_hid(hid_data);
         change_screen_state      = SCREEN_VOLUME;
         hid_data->volume_changed = false;
-        new_hid_data             = true;
         screen_timer             = timer_read32();
     }
     if (hid_data->media_artist_changed) {
-        lv_label_set_text(label_media_artist, hid_data->media_artist);
         change_screen_state            = SCREEN_HID;
         hid_data->media_artist_changed = false;
-        new_hid_data                   = true;
     }
     if (hid_data->media_title_changed) {
-        lv_label_set_text(label_media_title, hid_data->media_title);
         change_screen_state           = SCREEN_HID;
         hid_data->media_title_changed = false;
-        new_hid_data                  = true;
     }
-    if (new_hid_data) hid_sync_time = timer_read32();
-    return (hid_sync_time != 0) && timer_elapsed32(hid_sync_time) < 61 * 1000;
-}
 
-void set_layout_label(uint8_t layout) {
-    switch (layout) {
-        case LANG_EN:
-            lv_label_set_text(label_layout, EH_SYMBOL_GLOBE " EN");
-            break;
-
-        case LANG_RU:
-            lv_label_set_text(label_layout, EH_SYMBOL_GLOBE " RU");
-            break;
-    }
+    return is_hid_active();
 }
 
 static const char *PROGMEM LAYER_NAME[] = {
     "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
 };
 
-const char *get_layer_name(uint8_t layer) {
+const char *layer_upper_name(uint8_t layer) {
     if (layer < 16) {
         return LAYER_NAME[layer];
     } else {
@@ -228,11 +151,9 @@ void display_process_layer_state(uint8_t layer) {
 
     change_screen_state = SCREEN_LAYOUT;
 
-    const char *layer_name = get_layer_name(layer);
-    char        buf[32];
-    sprintf(buf, EH_SYMBOL_LAYER " %s", layer_name);
-    lv_label_set_text(label_layer_small, buf);
-    lv_label_set_text(label_layer, buf);
+    const char *layer_label = get_layer_label(layer);
+    lv_label_set_text(label_layer_small, layer_label);
+    eh_screen_hid.update_layer(layer);
 
     update_layer_index = 0;
 }
@@ -262,7 +183,7 @@ void update_screen_state(void) {
             display_turn_on();
             break;
         case SCREEN_HID:
-            lv_scr_load(screen_hid);
+            eh_screen_hid.load();
             display_turn_on();
             break;
         case SCREEN_LAYOUT:
@@ -288,7 +209,7 @@ void display_housekeeping_task(void) {
     bool           hid_active = display_process_hid_data(hid_data);
     static uint8_t prev_lang  = 0;
     uint8_t        cur_lang   = get_cur_lang();
-    set_layout_label(cur_lang);
+    eh_screen_hid.update_layout(cur_lang);
     if (prev_lang != cur_lang) {
         change_screen_state = SCREEN_HID;
         prev_lang           = cur_lang;
