@@ -31,6 +31,7 @@ RGBLIGHT_ENABLE = no
 RAW_ENABLE = yes
 
 SRC += display.c
+SRC += screen_layout.c
 SRC += keyboards/ergohaven/lvgl_helpers.c
 SRC += keyboards/ergohaven/ergohaven_keycode_str.c
 SRC += keyboards/ergohaven/ergohaven_main.c
