@@ -21,50 +21,21 @@ typedef enum {
 static screen_t screen_state        = SCREEN_OFF;
 static screen_t change_screen_state = SCREEN_OFF;
 
+eh_screen_t current_screen;
+
 void display_init_screens_kb(void) {
     eh_screen_splash.init();
     eh_screen_layout.init();
     eh_screen_hid.init();
     eh_screen_volume.init();
-    display_process_layer_state(layer_state);
+    current_screen      = eh_screen_splash;
     change_screen_state = SCREEN_SPLASH;
-}
-
-bool display_process_hid_data(hid_data_t *hid_data) {
-    if (!hid_data->hid_changed) return is_hid_active();
-
-    hid_data->hid_changed = false;
-
-    eh_screen_hid.update_hid(hid_data);
-
-    if (hid_data->time_changed) {
-        hid_data->time_changed = false;
-    }
-    if (hid_data->volume_changed) {
-        eh_screen_volume.update_hid(hid_data);
-        change_screen_state      = SCREEN_VOLUME;
-        hid_data->volume_changed = false;
-        screen_timer             = timer_read32();
-    }
-    if (hid_data->media_artist_changed) {
-        change_screen_state            = SCREEN_HID;
-        hid_data->media_artist_changed = false;
-    }
-    if (hid_data->media_title_changed) {
-        change_screen_state           = SCREEN_HID;
-        hid_data->media_title_changed = false;
-    }
-
-    return is_hid_active();
 }
 
 void display_process_layer_state(uint8_t layer) {
     if (!is_display_enabled()) return;
-
     change_screen_state = SCREEN_LAYOUT;
-
-    eh_screen_hid.update_layer(layer);
-    eh_screen_layout.update_layer(layer);
+    current_screen.update_layer(layer);
 }
 
 void update_screen_state(void) {
@@ -72,38 +43,57 @@ void update_screen_state(void) {
     screen_state = change_screen_state;
     switch (screen_state) {
         case SCREEN_SPLASH:
-            eh_screen_splash.load();
+            current_screen = eh_screen_splash;
             display_turn_on();
             break;
         case SCREEN_HID:
-            eh_screen_hid.load();
+            current_screen = eh_screen_hid;
             display_turn_on();
             break;
         case SCREEN_LAYOUT:
-            eh_screen_layout.load();
+            current_screen = eh_screen_layout;
             display_turn_on();
             break;
         case SCREEN_VOLUME:
-            eh_screen_volume.load();
+            current_screen = eh_screen_volume;
             display_turn_on();
             break;
         case SCREEN_OFF:
             display_turn_off();
             break;
     }
+    load_screen(current_screen);
 }
 
 void display_housekeeping_task(void) {
     if (!is_display_enabled()) return;
 
-    eh_screen_layout.housekeep();
+    current_screen.housekeep();
 
-    hid_data_t    *hid_data   = get_hid_data();
-    bool           hid_active = display_process_hid_data(hid_data);
-    static uint8_t prev_lang  = 0;
-    uint8_t        cur_lang   = get_cur_lang();
-    eh_screen_hid.update_layout(cur_lang);
+    hid_data_t *hid_data   = get_hid_data();
+    bool        hid_active = is_hid_active();
+    if (hid_data->hid_changed) {
+        if (hid_data->volume_changed) {
+            change_screen_state      = SCREEN_VOLUME;
+            hid_data->volume_changed = false;
+            screen_timer             = timer_read32();
+        }
+        if (hid_data->media_artist_changed) {
+            change_screen_state            = SCREEN_HID;
+            hid_data->media_artist_changed = false;
+        }
+        if (hid_data->media_title_changed) {
+            change_screen_state           = SCREEN_HID;
+            hid_data->media_title_changed = false;
+        }
+        current_screen.update_hid(hid_data);
+        hid_data->hid_changed = false;
+    }
+
+    static uint8_t prev_lang = 0;
+    uint8_t        cur_lang  = get_cur_lang();
     if (prev_lang != cur_lang) {
+        current_screen.update_layout(cur_lang);
         change_screen_state = SCREEN_HID;
         prev_lang           = cur_lang;
     }
@@ -148,9 +138,9 @@ void display_housekeeping_task(void) {
                 break;
         }
     }
+
     if (change_screen_state != screen_state) {
         update_screen_state();
-        return;
     }
 }
 

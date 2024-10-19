@@ -211,6 +211,15 @@ const eh_screen_t eh_screen_volume = {
     .housekeep     = dummy_housekeep,
 };
 
+void load_screen(eh_screen_t screen) {
+    screen.update_layer(get_current_layer());
+    screen.update_layout(get_cur_lang());
+    screen.update_hid(get_hid_data());
+    screen.update_leds(host_keyboard_led_state());
+    screen.update_mods(get_mods() | get_oneshot_mods());
+    screen.load();
+}
+
 /* Screen home */
 
 static lv_obj_t *screen_home;
