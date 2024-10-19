@@ -2,6 +2,7 @@
 #include "ergohaven_ruen.h"
 #include "ergohaven_oled.h"
 #include "ergohaven_rgb.h"
+#include "ergohaven_display.h"
 #include "hid.h"
 
 typedef union {
@@ -183,6 +184,38 @@ void housekeeping_task_kb(void) {
 #endif
     housekeeping_task_ruen();
     housekeeping_task_user();
+}
+
+void suspend_power_down_kb(void) {
+#ifdef EH_HAS_DISPLAY
+    display_turn_off();
+#endif
+
+#ifdef RGBLIGHT_ENABLE
+    rgblight_suspend();
+#endif
+
+#ifdef OLED_ENABLE
+    oled_off();
+#endif
+
+    suspend_power_down_user();
+}
+
+void suspend_wakeup_init_kb(void) {
+#ifdef EH_HAS_DISPLAY
+    display_turn_on();
+#endif
+
+#ifdef RGBLIGHT_ENABLE
+    rgblight_wakeup();
+#endif
+
+#ifdef OLED_ENABLE
+    oled_on();
+#endif
+
+    suspend_wakeup_init_user();
 }
 
 uint8_t get_current_layer(void) {

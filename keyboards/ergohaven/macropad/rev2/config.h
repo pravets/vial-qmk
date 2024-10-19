@@ -19,3 +19,4 @@
 #define TAP_CODE_DELAY 1
 
 #define EH_SHORT_PRODUCT_NAME "M4CR0Pad"
+#define EH_HAS_DISPLAY

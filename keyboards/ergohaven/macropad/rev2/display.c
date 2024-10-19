@@ -143,13 +143,3 @@ void display_housekeeping_task(void) {
         update_screen_state();
     }
 }
-
-void suspend_power_down_kb(void) {
-    display_turn_off();
-    suspend_power_down_user();
-}
-
-void suspend_wakeup_init_kb(void) {
-    display_turn_on();
-    suspend_wakeup_init_user();
-}

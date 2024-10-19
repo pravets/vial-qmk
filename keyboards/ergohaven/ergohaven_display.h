@@ -1,7 +1,9 @@
 #pragma once
 
-#include "qp.h"
-#include "hid.h"
+#ifdef EH_HAS_DISPLAY
+
+#    include "qp.h"
+#    include "hid.h"
 
 extern lv_color_t accent_color_red;
 extern lv_color_t accent_color_blue;
@@ -58,3 +60,5 @@ extern const eh_screen_t eh_screen_home;
 extern const eh_screen_t eh_screen_hid;
 
 void load_screen(eh_screen_t screen);
+
+#endif

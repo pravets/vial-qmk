@@ -77,7 +77,7 @@ bool process_raw_hid_data(uint8_t *data, uint8_t length) {
     return new_hid_data;
 }
 
-#if (defined(OLED_ENABLE) || defined(EH_LCD_ENABLED)) && defined(SPLIT_KEYBOARD)
+#if (defined(OLED_ENABLE) || defined(EH_HAS_DISPLAY)) && defined(SPLIT_KEYBOARD)
 #    include "transactions.h"
 
 void raw_hid_receive_kb(uint8_t *data, uint8_t length) {

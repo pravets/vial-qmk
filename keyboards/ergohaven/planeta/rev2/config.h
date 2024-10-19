@@ -36,3 +36,4 @@
 #define EH_DISPLAY_BACKLIGHT_PIN GP18
 
 #define EH_SHORT_PRODUCT_NAME "Planeta"
+#define EH_HAS_DISPLAY
