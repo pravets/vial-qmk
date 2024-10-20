@@ -97,7 +97,12 @@ void display_housekeeping_task(void) {
         prev_lang           = cur_lang;
     }
 
-    current_screen.update_layer(get_current_layer());
+    static uint8_t prev_layer = 255;
+    uint8_t        cur_layer  = get_current_layer();
+    if (prev_layer != cur_layer) {
+        current_screen.update_layer(cur_layer);
+        prev_layer = cur_layer;
+    }
 
     led_t led_state = host_keyboard_led_state();
     led_state.caps_lock |= get_caps_word();
