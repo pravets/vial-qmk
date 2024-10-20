@@ -88,6 +88,9 @@ void display_turn_on(void) {
         gpio_write_pin_high(EH_DISPLAY_BACKLIGHT_PIN);
         qp_power(display, true);
         is_display_on = true;
+#ifdef RGBLIGHT_ENABLE
+        rgblight_wakeup();
+#endif
     }
 }
 
@@ -96,6 +99,9 @@ void display_turn_off(void) {
         is_display_on = false;
         qp_power(display, false);
         gpio_write_pin_low(EH_DISPLAY_BACKLIGHT_PIN);
+#ifdef RGBLIGHT_ENABLE
+        rgblight_suspend();
+#endif
     }
 }
 
@@ -247,12 +253,13 @@ void init_screen_home(void) {
 
     label_time = lv_label_create(screen_home);
     lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_time, 40, 0);
-    lv_obj_set_style_pad_bottom(label_time, 20, 0);
+    lv_obj_set_style_pad_top(label_time, 30, 0);
+    lv_obj_set_style_pad_bottom(label_time, 10, 0);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_home);
     lv_obj_add_style(bottom_row, &style_container, 0);
     use_flex_row(bottom_row);
+    lv_obj_set_style_pad_bottom(bottom_row, 10, 0);
 
     label_layer = lv_label_create(bottom_row);
     lv_label_set_text(label_layer, "");
@@ -285,7 +292,6 @@ void load_screen_home(void) {
 }
 
 void update_hid_home(hid_data_t *hid) {
-    lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
     lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
 }
 
@@ -337,12 +343,13 @@ void init_screen_hid(void) {
     label_hid_time = lv_label_create(screen_hid);
     lv_label_set_text(label_hid_time, "00:00");
     lv_obj_set_style_text_font(label_hid_time, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_hid_time, 40, 0);
-    lv_obj_set_style_pad_bottom(label_hid_time, 20, 0);
+    lv_obj_set_style_pad_top(label_hid_time, 30, 0);
+    lv_obj_set_style_pad_bottom(label_hid_time, 10, 0);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_hid);
     lv_obj_add_style(bottom_row, &style_container, 0);
     use_flex_row(bottom_row);
+    lv_obj_set_style_pad_bottom(bottom_row, 10, 0);
 
     label_hid_layer = lv_label_create(bottom_row);
     lv_label_set_text(label_hid_layer, "");
