@@ -1,108 +1,151 @@
 #include "display.h"
 #include "qp.h"
-#include "lvgl_helpers.h"
 #include "ergohaven_ruen.h"
 #include "hid.h"
 #include "ergohaven.h"
+#include "ergohaven_symbols.h"
 #include "ergohaven_display.h"
 
-static uint16_t home_screen_timer = 0;
+static uint32_t screen_timer = 0;
 
-/* screens */
-static lv_obj_t *screen_media;
+typedef enum {
+    SCREEN_OFF = -1,
+    SCREEN_SPLASH,
+    SCREEN_HOME,
+    SCREEN_VOLUME,
+    SCREEN_HID,
+} screen_t;
 
-/* media screen content */
-static lv_obj_t *label_media_artist;
-static lv_obj_t *label_media_title;
+static screen_t screen_state        = SCREEN_OFF;
+static screen_t change_screen_state = SCREEN_OFF;
 
-void init_screen_media(void) {
-    screen_media = lv_obj_create(NULL);
-    lv_obj_add_style(screen_media, &style_screen, 0);
-    use_flex_column(screen_media);
-    lv_obj_set_flex_align(screen_media, LV_FLEX_ALIGN_SPACE_EVENLY, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-
-    label_media_artist = lv_label_create(screen_media);
-    lv_label_set_text(label_media_artist, "N/A");
-    lv_label_set_long_mode(label_media_artist, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(label_media_artist, lv_pct(90));
-    lv_obj_set_style_text_align(label_media_artist, LV_TEXT_ALIGN_CENTER, 0);
-
-    label_media_title = lv_label_create(screen_media);
-    lv_label_set_text(label_media_title, "N/A");
-    lv_label_set_long_mode(label_media_title, LV_LABEL_LONG_WRAP);
-    lv_obj_set_width(label_media_title, lv_pct(90));
-    lv_obj_set_style_text_align(label_media_title, LV_TEXT_ALIGN_CENTER, 0);
-}
+eh_screen_t current_screen;
 
 void display_init_screens_kb(void) {
+    eh_screen_splash.init();
     eh_screen_home.init();
+    eh_screen_hid.init();
     eh_screen_volume.init();
-    init_screen_media();
-    display_turn_on();
-}
-
-void start_home_screen_timer(void) {
-    dprint("start_home_screen_timer\n");
-    home_screen_timer = timer_read();
-}
-
-void display_process_hid_data(hid_data_t *hid_data) {
-    dprintf("display_process_hid_data");
-    if (!hid_data->hid_changed) return;
-    hid_data->hid_changed = false;
-
-    eh_screen_volume.update_hid(hid_data);
-    eh_screen_home.update_hid(hid_data);
-
-    if (hid_data->time_changed) {
-        hid_data->time_changed = false;
-    }
-    if (hid_data->volume_changed) {
-        eh_screen_volume.load();
-        start_home_screen_timer();
-        hid_data->volume_changed = false;
-    }
-    if (hid_data->media_artist_changed) {
-        lv_label_set_text(label_media_artist, hid_data->media_artist);
-        lv_scr_load(screen_media);
-        start_home_screen_timer();
-        hid_data->media_artist_changed = false;
-    }
-    if (hid_data->media_title_changed) {
-        lv_label_set_text(label_media_title, hid_data->media_title);
-        lv_scr_load(screen_media);
-        start_home_screen_timer();
-        hid_data->media_title_changed = false;
-    }
+    current_screen      = eh_screen_splash;
+    change_screen_state = SCREEN_SPLASH;
 }
 
 void display_process_layer_state(uint8_t layer) {
     if (!is_display_enabled()) return;
-    eh_screen_home.update_layer(layer);
+    change_screen_state = SCREEN_HOME;
+    current_screen.update_layer(layer);
+}
+
+void update_screen_state(void) {
+    screen_timer = timer_read32();
+    screen_state = change_screen_state;
+    switch (screen_state) {
+        case SCREEN_SPLASH:
+            current_screen = eh_screen_splash;
+            display_turn_on();
+            break;
+        case SCREEN_HID:
+            current_screen = eh_screen_hid;
+            display_turn_on();
+            break;
+        case SCREEN_HOME:
+            current_screen = eh_screen_home;
+            display_turn_on();
+            break;
+        case SCREEN_VOLUME:
+            current_screen = eh_screen_volume;
+            display_turn_on();
+            break;
+        case SCREEN_OFF:
+            display_turn_off();
+            break;
+    }
+    load_screen(current_screen);
 }
 
 void display_housekeeping_task(void) {
-    if (home_screen_timer && timer_elapsed(home_screen_timer) > 5000) {
-        home_screen_timer = 0;
-        eh_screen_home.load();
+    if (!is_display_enabled()) return;
+
+    current_screen.housekeep();
+
+    hid_data_t *hid_data   = get_hid_data();
+    bool        hid_active = is_hid_active();
+    if (hid_data->hid_changed) {
+        if (hid_data->volume_changed) {
+            change_screen_state      = SCREEN_VOLUME;
+            hid_data->volume_changed = false;
+            screen_timer             = timer_read32();
+        }
+        if (hid_data->media_artist_changed) {
+            change_screen_state            = SCREEN_HID;
+            hid_data->media_artist_changed = false;
+        }
+        if (hid_data->media_title_changed) {
+            change_screen_state           = SCREEN_HID;
+            hid_data->media_title_changed = false;
+        }
+        current_screen.update_hid(hid_data);
+        hid_data->hid_changed = false;
     }
 
-    if (last_input_activity_elapsed() > EH_TIMEOUT) {
-        rgblight_suspend();
-        display_turn_off();
-        return;
-    } else {
-        rgblight_wakeup();
-        display_turn_on();
+    static uint8_t prev_lang = 0;
+    uint8_t        cur_lang  = get_cur_lang();
+    if (prev_lang != cur_lang) {
+        current_screen.update_layout(cur_lang);
+        change_screen_state = SCREEN_HID;
+        prev_lang           = cur_lang;
     }
-
-    uint8_t mods = get_mods() | get_oneshot_mods();
-    eh_screen_home.update_mods(mods);
-    hid_data_t *hid_data = get_hid_data();
-    display_process_hid_data(hid_data);
-    eh_screen_home.update_layout(get_cur_lang());
 
     led_t led_state = host_keyboard_led_state();
     led_state.caps_lock |= is_caps_word_on();
-    eh_screen_home.update_leds(led_state);
+    current_screen.update_leds(led_state);
+
+    current_screen.update_mods(get_mods() | get_oneshot_mods());
+
+    if (screen_state == change_screen_state) {
+        uint32_t screen_elapsed   = timer_elapsed32(screen_timer);
+        uint32_t activity_elapsed = last_input_activity_elapsed();
+
+        switch (screen_state) {
+            case SCREEN_SPLASH:
+                if (screen_elapsed > 2 * 1000) {
+                    change_screen_state = SCREEN_HOME;
+                }
+                break;
+
+            case SCREEN_HOME:
+                if (hid_active && activity_elapsed > 10 * 1000) {
+                    change_screen_state = SCREEN_HID;
+                } else if (activity_elapsed > EH_TIMEOUT) {
+                    change_screen_state = SCREEN_OFF;
+                }
+                break;
+
+            case SCREEN_HID:
+                if (!hid_active) {
+                    change_screen_state = SCREEN_HOME;
+                } else if (activity_elapsed > EH_TIMEOUT && screen_elapsed > 10 * 1000) {
+                    change_screen_state = SCREEN_OFF;
+                } else if (activity_elapsed < 10 * 1000) {
+                    change_screen_state = SCREEN_HOME;
+                }
+                break;
+
+            case SCREEN_VOLUME:
+                if (screen_elapsed > 2 * 1000) {
+                    change_screen_state = SCREEN_HID;
+                }
+                break;
+
+            case SCREEN_OFF:
+                if (activity_elapsed < EH_TIMEOUT) {
+                    change_screen_state = SCREEN_HOME;
+                }
+                break;
+        }
+    }
+
+    if (change_screen_state != screen_state) {
+        update_screen_state();
+    }
 }
