@@ -1,5 +1,6 @@
 #include "display.h"
 #include "ergohaven.h"
+#include "ergohaven_display.h"
 
 void housekeeping_task_user(void) {
     if (is_display_enabled()) {

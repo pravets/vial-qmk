@@ -2,6 +2,7 @@
 #include "transactions.h"
 #include "ergohaven_ruen.h"
 #include "ergohaven_rgb.h"
+#include "ergohaven_display.h"
 
 typedef union {
     uint32_t raw;
@@ -89,41 +90,10 @@ bool is_display_side(void) {
 #endif
     return false;
 }
-
-static bool lights_off = false;
-
-void lights_wakeup(void) {
-    if (lights_off) {
-        lights_off = false;
-        rgblight_wakeup();
-    }
-}
-
-void lights_suspend(void) {
-    if (!lights_off) {
-        lights_off = true;
-        rgblight_suspend();
-    }
-}
-
 void housekeeping_task_user(void) {
     if (is_display_enabled() && is_display_side()) {
         display_housekeeping_task();
     }
-
-    uint32_t elapsed = last_input_activity_elapsed();
-    if (elapsed > __UINT32_MAX__ - 1000) // possible overflow
-        elapsed = 0;
-
-    if (elapsed > EH_TIMEOUT) {
-        lights_suspend();
-        if (is_display_side()) display_turn_off();
-        return;
-    } else {
-        lights_wakeup();
-        if (is_display_side()) display_turn_on();
-    }
-
     if (is_keyboard_master()) {
         // Interact with slave every 500ms
         static uint32_t last_sync          = 0;
@@ -140,9 +110,7 @@ void housekeeping_task_user(void) {
             }
         }
     }
-    layer_state_set_rgb(layer_state | default_layer_state);
 }
-
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     static int32_t scroll_accumulated_h = 0;
     static int32_t scroll_accumulated_v = 0;
@@ -177,4 +145,14 @@ void keyboard_post_init_user(void) {
     via_set_layout_options_kb(vial_config.raw);
 
     transaction_register_rpc(RPC_SYNC_CONFIG, sync_config);
+}
+
+layer_state_t default_layer_state_set_user(layer_state_t state) {
+    if (is_display_side()) display_process_layer_state(get_highest_layer(layer_state | state));
+    return state;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    if (is_display_side()) display_process_layer_state(get_highest_layer(state | default_layer_state));
+    return state;
 }
