@@ -287,7 +287,7 @@ void init_screen_home(void) {
 }
 
 void load_screen_home(void) {
-    lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
+    if (!is_hid_active()) lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
     lv_scr_load(screen_home);
 }
 
