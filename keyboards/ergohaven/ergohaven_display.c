@@ -197,13 +197,14 @@ void init_screen_volume(void) {
     lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
 }
 
-void load_screen_volume(void) {
-    lv_scr_load(screen_volume);
-}
-
 void update_hid_volume(hid_data_t *hid) {
     lv_arc_set_value(arc_volume, hid->volume);
     lv_label_set_text_fmt(label_volume_arc, "%02d", hid->volume);
+}
+
+void load_screen_volume(void) {
+    update_hid_volume(get_hid_data());
+    lv_scr_load(screen_volume);
 }
 
 const eh_screen_t eh_screen_volume = {
@@ -286,13 +287,16 @@ void init_screen_home(void) {
     label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
 }
 
-void load_screen_home(void) {
-    if (!is_hid_active()) lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
-    lv_scr_load(screen_home);
+void update_hid_home(hid_data_t *hid) {
+    if (is_hid_active())
+        lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
+    else
+        lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
 }
 
-void update_hid_home(hid_data_t *hid) {
-    lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
+void load_screen_home(void) {
+    update_hid_home(get_hid_data());
+    lv_scr_load(screen_home);
 }
 
 void update_layout_home(uint8_t layout) {
