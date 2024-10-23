@@ -90,6 +90,7 @@ bool is_display_side(void) {
 #endif
     return false;
 }
+
 void housekeeping_task_user(void) {
     if (is_display_enabled() && is_display_side()) {
         display_housekeeping_task();
@@ -98,7 +99,7 @@ void housekeeping_task_user(void) {
         // Interact with slave every 500ms
         static uint32_t last_sync          = 0;
         static uint32_t last_synced_config = 0;
-        if (timer_elapsed32(last_sync) > 500) {
+        if (last_sync == 0 || timer_elapsed32(last_sync) > 500) {
             vial_config.lang      = get_lang();
             vial_config.mac       = get_mac();
             vial_config.caps_word = get_caps_word();
@@ -111,6 +112,7 @@ void housekeeping_task_user(void) {
         }
     }
 }
+
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     static int32_t scroll_accumulated_h = 0;
     static int32_t scroll_accumulated_v = 0;
