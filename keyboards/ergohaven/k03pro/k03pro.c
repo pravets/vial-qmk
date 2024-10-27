@@ -68,10 +68,7 @@ int get_scroll_div(uint8_t div_mode) {
 
 void via_set_layout_options_kb(uint32_t value) {
     vial_config.raw = value;
-    uint16_t dpi    = get_dpi(vial_config.dpi_mode);
-    if (pointing_device_get_cpi() != dpi) {
-        pointing_device_set_cpi(dpi);
-    }
+    uprintf("set options %lx\n", value);
     scroll_divisor_x = scroll_divisor_y = get_scroll_div(vial_config.scroll_divisor);
 }
 
@@ -95,6 +92,7 @@ void housekeeping_task_user(void) {
     if (is_display_enabled() && is_display_side()) {
         display_housekeeping_task();
     }
+
     if (is_keyboard_master()) {
         // Interact with slave every 500ms
         static uint32_t last_sync          = 0;
@@ -104,11 +102,26 @@ void housekeeping_task_user(void) {
             vial_config.mac       = get_mac();
             vial_config.caps_word = get_caps_word();
             if (last_synced_config != vial_config.raw) {
+                uprintf("sync %lx\n", vial_config.raw);
                 if (transaction_rpc_send(RPC_SYNC_CONFIG, sizeof(vial_config_t), &vial_config)) {
                     last_sync          = timer_read32();
                     last_synced_config = vial_config.raw;
+                    uprintf("sync ok\n");
                 }
             }
+        }
+    }
+
+    {
+        static uint32_t last_sync = 0;
+        static uint16_t cur_dpi   = 0;
+
+        uint16_t dpi = get_dpi(vial_config.dpi_mode);
+        if (dpi != cur_dpi && (last_sync == 0 || timer_elapsed32(last_sync) > 500)) {
+            pointing_device_set_cpi(dpi);
+            cur_dpi = pointing_device_get_cpi();
+            uprintf("set dpi %u (%u current)\n", dpi, cur_dpi);
+            last_sync = timer_read32();
         }
     }
 }
@@ -139,8 +152,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 void keyboard_post_init_user(void) {
-    debug_enable = true;
-
     if (is_display_side()) {
         display_init_kb();
     }
