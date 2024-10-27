@@ -142,6 +142,7 @@ void display_housekeeping_task(void) {
         prev_led_state.reserved = 1;
         prev_mods               = 255;
         hid_data->hid_changed   = hid_active;
+        return;
     }
 
     uint8_t cur_layer = get_current_layer();
