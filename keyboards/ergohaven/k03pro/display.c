@@ -35,14 +35,19 @@ void display_init_screens_kb(void) {
     screen_timer = timer_read32();
 }
 
-void display_process_layer_state(uint8_t layer) {
-    if (!is_display_enabled()) return;
-    change_screen_state = SCREEN_HOME;
-    current_screen.update_layer(layer);
-}
-
 void display_housekeeping_task(void) {
     if (!is_display_enabled()) return;
+
+    static uint8_t prev_layer     = 255;
+    static uint8_t prev_lang      = -1;
+    static led_t   prev_led_state = {.raw = 255};
+    static uint8_t prev_mods      = 255;
+
+    uint8_t cur_layer = get_current_layer();
+    uint8_t cur_lang  = get_lang();
+    led_t   led_state = host_keyboard_led_state();
+    led_state.caps_lock |= get_caps_word();
+    uint8_t mods = get_mods() | get_oneshot_mods();
 
     hid_data_t *hid_data   = get_hid_data();
     bool        hid_active = is_hid_active();
@@ -76,7 +81,7 @@ void display_housekeeping_task(void) {
                 break;
 
             case SCREEN_HOME:
-                if (hid_active && activity_elapsed > 10 * 1000) {
+                if (hid_active && activity_elapsed > 2 * 1000) {
                     change_screen_state = SCREEN_HID;
                 } else if (activity_elapsed > EH_TIMEOUT) {
                     change_screen_state = SCREEN_OFF;
@@ -86,9 +91,9 @@ void display_housekeeping_task(void) {
             case SCREEN_HID:
                 if (!hid_active) {
                     change_screen_state = SCREEN_HOME;
-                } else if (activity_elapsed > EH_TIMEOUT && screen_elapsed > 10 * 1000) {
+                } else if (activity_elapsed > EH_TIMEOUT && screen_elapsed > 2 * 1000) {
                     change_screen_state = SCREEN_OFF;
-                } else if (activity_elapsed < 10 * 1000) {
+                } else if (mods != 0 || (prev_led_state.raw != 255 && prev_led_state.raw != led_state.raw)) {
                     change_screen_state = SCREEN_HOME;
                 }
                 break;
@@ -107,12 +112,8 @@ void display_housekeeping_task(void) {
         }
     }
 
-    static uint8_t prev_layer     = 255;
-    static uint8_t prev_lang      = -1;
-    static led_t   prev_led_state = {.reserved = 1};
-    static uint8_t prev_mods      = 255;
-
     if (change_screen_state != screen_state) {
+        dprintf("change screen state %d->%d\n", screen_state, change_screen_state);
         screen_timer = timer_read32();
         screen_state = change_screen_state;
         switch (screen_state) {
@@ -137,37 +138,32 @@ void display_housekeeping_task(void) {
                 break;
         }
         current_screen.load();
-        prev_layer              = 255;
-        prev_lang               = -1;
-        prev_led_state.reserved = 1;
-        prev_mods               = 255;
-        hid_data->hid_changed   = hid_active;
+        prev_layer            = 255;
+        prev_lang             = -1;
+        prev_led_state.raw    = 255;
+        prev_mods             = 255;
+        hid_data->hid_changed = hid_active;
         return;
     }
 
-    uint8_t cur_layer = get_current_layer();
     if (prev_layer != cur_layer) {
         current_screen.update_layer(cur_layer);
         prev_layer = cur_layer;
         return;
     }
 
-    uint8_t cur_lang = get_lang();
     if (prev_lang != cur_lang) {
         current_screen.update_layout(cur_lang);
         prev_lang = cur_lang;
         return;
     }
 
-    led_t led_state = host_keyboard_led_state();
-    led_state.caps_lock |= get_caps_word();
     if (led_state.raw != prev_led_state.raw) {
         current_screen.update_leds(led_state);
-        prev_led_state = led_state;
+        prev_led_state.raw = led_state.raw;
         return;
     }
 
-    uint8_t mods = get_mods() | get_oneshot_mods();
     if (mods != prev_mods) {
         current_screen.update_mods(mods);
         prev_mods = mods;

@@ -226,13 +226,3 @@ void keyboard_post_init_user(void) {
     transaction_register_rpc(RPC_SYNC_TOUCH, sync_touch);
     transaction_register_rpc(RPC_SYNC_DISPLAY, sync_display);
 }
-
-layer_state_t default_layer_state_set_user(layer_state_t state) {
-    if (is_display_side()) display_process_layer_state(get_highest_layer(layer_state | state));
-    return state;
-}
-
-layer_state_t layer_state_set_user(layer_state_t state) {
-    if (is_display_side()) display_process_layer_state(get_highest_layer(state | default_layer_state));
-    return state;
-}
