@@ -127,15 +127,6 @@ const char *get_layout_label(uint8_t layout) {
     }
 }
 
-/* Screen helpers */
-
-void dummy_update_hid(hid_data_t *hid) {}
-void dummy_update_layout(uint8_t layout) {}
-void dummy_update_layer(uint8_t layer) {}
-void dummy_update_leds(led_t led_state) {}
-void dummy_update_mods(uint8_t layout) {}
-void dummy_housekeep(void) {}
-
 /* Screen splash */
 
 static lv_obj_t *screen_splash;
@@ -143,7 +134,7 @@ static lv_obj_t *label_version;
 
 LV_IMG_DECLARE(ergohaven_logo);
 
-void init_screen_splash(void) {
+void splash_screen_init(void) {
     screen_splash = lv_obj_create(NULL);
     lv_obj_add_style(screen_splash, &style_screen, 0);
     use_flex_column(screen_splash);
@@ -158,19 +149,18 @@ void init_screen_splash(void) {
     lv_label_set_text(label_version, "v" EH_VERSION_STR);
 }
 
-void load_screen_splash(void) {
+void splash_screen_load(void) {
+    lv_scr_load(screen_splash);
+}
+
+void splash_screen_housekeep(void) {
     lv_scr_load(screen_splash);
 }
 
 const eh_screen_t eh_screen_splash = {
-    .init          = init_screen_splash,
-    .load          = load_screen_splash,
-    .update_hid    = dummy_update_hid,
-    .update_layout = dummy_update_layout,
-    .update_layer  = dummy_update_layer,
-    .update_leds   = dummy_update_leds,
-    .update_mods   = dummy_update_mods,
-    .housekeep     = dummy_housekeep,
+    .init      = splash_screen_init,
+    .load      = splash_screen_load,
+    .housekeep = splash_screen_housekeep,
 };
 
 /* Screen volume */
@@ -179,7 +169,7 @@ static lv_obj_t *screen_volume;
 static lv_obj_t *arc_volume;
 static lv_obj_t *label_volume_arc;
 
-void init_screen_volume(void) {
+void screen_volume_init(void) {
     screen_volume = lv_obj_create(NULL);
     lv_obj_add_style(screen_volume, &style_screen, 0);
 
@@ -197,39 +187,31 @@ void init_screen_volume(void) {
     lv_obj_align(volume_text_label, LV_ALIGN_BOTTOM_MID, 0, -50);
 }
 
-void update_hid_volume(hid_data_t *hid) {
-    lv_arc_set_value(arc_volume, hid->volume);
-    lv_label_set_text_fmt(label_volume_arc, "%02d", hid->volume);
-}
-
-void load_screen_volume(void) {
-    update_hid_volume(get_hid_data());
+void screen_volume_load(void) {
     lv_scr_load(screen_volume);
 }
 
-const eh_screen_t eh_screen_volume = {
-    .init          = init_screen_volume,
-    .load          = load_screen_volume,
-    .update_hid    = update_hid_volume,
-    .update_layout = dummy_update_layout,
-    .update_layer  = dummy_update_layer,
-    .update_leds   = dummy_update_leds,
-    .update_mods   = dummy_update_mods,
-    .housekeep     = dummy_housekeep,
-};
-
-void load_screen(eh_screen_t screen) {
-    screen.load();
-    screen.update_layer(get_current_layer());
-    screen.update_layout(get_cur_lang());
-    if (is_hid_active()) screen.update_hid(get_hid_data());
-    screen.update_leds(host_keyboard_led_state());
-    screen.update_mods(get_mods() | get_oneshot_mods());
+void screen_volume_housekeep(void) {
+    static uint8_t prev_volume = -1;
+    hid_data_t    *hid         = get_hid_data();
+    if (hid->volume != prev_volume) {
+        prev_volume = hid->volume;
+        lv_arc_set_value(arc_volume, hid->volume);
+        lv_label_set_text_fmt(label_volume_arc, "%02d", hid->volume);
+        hid->volume_changed = false;
+    }
 }
+
+const eh_screen_t eh_screen_volume = {
+    .init      = screen_volume_init,
+    .load      = screen_volume_load,
+    .housekeep = screen_volume_housekeep,
+};
 
 /* Screen home */
 
 static lv_obj_t *screen_home;
+static lv_obj_t *label_product;
 static lv_obj_t *label_time;
 static lv_obj_t *label_layer;
 static lv_obj_t *label_layout;
@@ -239,28 +221,35 @@ static lv_obj_t *label_alt;
 static lv_obj_t *label_gui;
 static lv_obj_t *label_caps;
 static lv_obj_t *label_num;
+static lv_obj_t *label_hid_media_artist;
+static lv_obj_t *label_hid_media_title;
+static lv_obj_t *screen_home_mods;
+static lv_obj_t *screen_home_media;
 
-void update_layer_home(uint8_t layer) {
-    lv_label_set_text(label_layer, get_layer_label(layer));
-}
-
-void init_screen_home(void) {
+void screen_home_init(void) {
     screen_home = lv_obj_create(NULL);
     lv_obj_add_style(screen_home, &style_screen, 0);
-    lv_obj_set_layout(screen_home, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(screen_home, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(screen_home, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_scrollbar_mode(screen_home, LV_SCROLLBAR_MODE_OFF);
+
+    label_product = lv_label_create(screen_home);
+    lv_obj_set_style_text_font(label_product, &lv_font_montserrat_40, LV_PART_MAIN);
+    lv_obj_set_style_text_align(label_product, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_pos(label_product, 0, 40);
+    lv_obj_set_size(label_product, 240, 50);
+    lv_label_set_text(label_product, EH_SHORT_PRODUCT_NAME);
 
     label_time = lv_label_create(screen_home);
     lv_obj_set_style_text_font(label_time, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_time, 30, 0);
-    lv_obj_set_style_pad_bottom(label_time, 10, 0);
+    lv_obj_set_style_text_align(label_time, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_pos(label_time, 0, 36);
+    lv_obj_set_size(label_time, 240, 50);
+    lv_label_set_text(label_time, "00:00");
+    lv_obj_add_flag(label_time, LV_OBJ_FLAG_HIDDEN);
 
     lv_obj_t *bottom_row = lv_obj_create(screen_home);
     lv_obj_add_style(bottom_row, &style_container, 0);
     use_flex_row(bottom_row);
-    lv_obj_set_style_pad_bottom(bottom_row, 10, 0);
+    lv_obj_set_pos(bottom_row, 0, 90);
+    lv_obj_set_size(bottom_row, 240, 40);
 
     label_layer = lv_label_create(bottom_row);
     lv_label_set_text(label_layer, "");
@@ -274,100 +263,28 @@ void init_screen_home(void) {
     lv_obj_set_style_text_align(label_layout, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_set_style_text_font(label_layout, &ergohaven_symbols_20, LV_PART_MAIN);
 
-    lv_obj_t *mods = lv_obj_create(screen_home);
-    lv_obj_add_style(mods, &style_container, 0);
-    use_flex_row(mods);
+    screen_home_mods = lv_obj_create(screen_home);
+    lv_obj_add_style(screen_home_mods, &style_container, 0);
+    use_flex_row(screen_home_mods);
+    lv_obj_set_pos(screen_home_mods, 0, 130);
+    lv_obj_set_size(screen_home_mods, 240, 100);
 
-    label_gui   = create_button(mods, "GUI", &style_button, &style_button_active);
-    label_alt   = create_button(mods, "ALT", &style_button, &style_button_active);
-    label_ctrl  = create_button(mods, "CTL", &style_button, &style_button_active);
-    label_shift = create_button(mods, "SFT", &style_button, &style_button_active);
+    label_gui   = create_button(screen_home_mods, "GUI", &style_button, &style_button_active);
+    label_alt   = create_button(screen_home_mods, "ALT", &style_button, &style_button_active);
+    label_ctrl  = create_button(screen_home_mods, "CTL", &style_button, &style_button_active);
+    label_shift = create_button(screen_home_mods, "SFT", &style_button, &style_button_active);
 
-    label_caps = create_button(mods, "CAPS", &style_button, &style_button_active);
-    label_num  = create_button(mods, "NUM", &style_button, &style_button_active);
-}
+    label_caps = create_button(screen_home_mods, "CAPS", &style_button, &style_button_active);
+    label_num  = create_button(screen_home_mods, "NUM", &style_button, &style_button_active);
 
-void update_hid_home(hid_data_t *hid) {
-    if (is_hid_active())
-        lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
-    else
-        lv_label_set_text(label_time, EH_SHORT_PRODUCT_NAME);
-}
+    screen_home_media = lv_obj_create(screen_home);
+    lv_obj_add_flag(screen_home_media, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_style(screen_home_media, &style_container, 0);
+    use_flex_row(screen_home_media);
+    lv_obj_set_pos(screen_home_media, 0, 110);
+    lv_obj_set_size(screen_home_media, 240, 170);
 
-void load_screen_home(void) {
-    update_hid_home(get_hid_data());
-    lv_scr_load(screen_home);
-}
-
-void update_layout_home(uint8_t layout) {
-    lv_label_set_text(label_layout, get_layout_label(layout));
-}
-
-void update_leds_home(led_t led_state) {
-    toggle_state(label_caps, LV_STATE_PRESSED, led_state.caps_lock);
-    toggle_state(label_num, LV_STATE_PRESSED, led_state.num_lock);
-}
-
-void update_mods_home(uint8_t mods) {
-    toggle_state(label_shift, LV_STATE_PRESSED, mods & MOD_MASK_SHIFT);
-    toggle_state(label_ctrl, LV_STATE_PRESSED, mods & MOD_MASK_CTRL);
-    toggle_state(label_alt, LV_STATE_PRESSED, mods & MOD_MASK_ALT);
-    toggle_state(label_gui, LV_STATE_PRESSED, mods & MOD_MASK_GUI);
-}
-
-const eh_screen_t eh_screen_home = {
-    .init          = init_screen_home,
-    .load          = load_screen_home,
-    .update_hid    = update_hid_home,
-    .update_layout = update_layout_home,
-    .update_layer  = update_layer_home,
-    .update_leds   = update_leds_home,
-    .update_mods   = update_mods_home,
-    .housekeep     = dummy_housekeep,
-};
-
-/* Screen HID */
-
-static lv_obj_t *screen_hid;
-
-static lv_obj_t *label_hid_time;
-static lv_obj_t *label_hid_layer;
-static lv_obj_t *label_hid_media_artist;
-static lv_obj_t *label_hid_media_title;
-static lv_obj_t *label_hid_layout;
-
-void init_screen_hid(void) {
-    screen_hid = lv_obj_create(NULL);
-    lv_obj_add_style(screen_hid, &style_screen, 0);
-    lv_obj_set_layout(screen_hid, LV_LAYOUT_FLEX);
-    lv_obj_set_flex_flow(screen_hid, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(screen_hid, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_scrollbar_mode(screen_hid, LV_SCROLLBAR_MODE_OFF);
-
-    label_hid_time = lv_label_create(screen_hid);
-    lv_label_set_text(label_hid_time, "00:00");
-    lv_obj_set_style_text_font(label_hid_time, &lv_font_montserrat_48, LV_PART_MAIN);
-    lv_obj_set_style_pad_top(label_hid_time, 30, 0);
-    lv_obj_set_style_pad_bottom(label_hid_time, 10, 0);
-
-    lv_obj_t *bottom_row = lv_obj_create(screen_hid);
-    lv_obj_add_style(bottom_row, &style_container, 0);
-    use_flex_row(bottom_row);
-    lv_obj_set_style_pad_bottom(bottom_row, 10, 0);
-
-    label_hid_layer = lv_label_create(bottom_row);
-    lv_label_set_text(label_hid_layer, "");
-    lv_obj_set_size(label_hid_layer, 110, 20);
-    lv_obj_set_style_text_align(label_hid_layer, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_hid_layer, &ergohaven_symbols_20, LV_PART_MAIN);
-
-    label_hid_layout = lv_label_create(bottom_row);
-    lv_label_set_text(label_hid_layout, "");
-    lv_obj_set_size(label_hid_layout, 110, 20);
-    lv_obj_set_style_text_align(label_hid_layout, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_font(label_hid_layout, &ergohaven_symbols_20, LV_PART_MAIN);
-
-    label_hid_media_title = lv_label_create(screen_hid);
+    label_hid_media_title = lv_label_create(screen_home_media);
     lv_label_set_text(label_hid_media_title, "");
     lv_label_set_long_mode(label_hid_media_title, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(label_hid_media_title, lv_pct(95));
@@ -376,43 +293,124 @@ void init_screen_hid(void) {
     lv_obj_set_style_pad_top(label_hid_media_title, 10, 0);
     lv_obj_set_style_pad_bottom(label_hid_media_title, 0, 0);
 
-    label_hid_media_artist = lv_label_create(screen_hid);
+    label_hid_media_artist = lv_label_create(screen_home_media);
     lv_label_set_text(label_hid_media_artist, "");
     lv_label_set_long_mode(label_hid_media_artist, LV_LABEL_LONG_WRAP);
     lv_obj_set_width(label_hid_media_artist, lv_pct(95));
     lv_obj_set_style_text_align(label_hid_media_artist, LV_TEXT_ALIGN_CENTER, 0);
     lv_obj_set_style_text_font(label_hid_media_artist, &ergohaven_symbols_20, LV_PART_MAIN);
 
-    lv_obj_set_style_pad_top(label_hid_media_artist, 0, 0);
-    lv_obj_set_style_pad_bottom(label_hid_media_artist, 20, 0);
+    lv_obj_set_style_pad_top(label_hid_media_artist, 10, 0);
     lv_obj_set_style_text_color(label_hid_media_artist, accent_color_blue, 0);
 }
 
-void load_screen_hid(void) {
-    lv_scr_load(screen_hid);
+void screen_home_load(void) {
+    lv_scr_load(screen_home);
 }
 
-void update_hid_hid(hid_data_t *hid) {
-    lv_label_set_text_fmt(label_hid_time, "%02d:%02d", hid->hours, hid->minutes);
-    lv_label_set_text(label_hid_media_artist, hid->media_artist);
-    lv_label_set_text(label_hid_media_title, hid->media_title);
+void screen_home_housekeep(void) {
+    static uint8_t prev_layer     = 255;
+    static uint8_t prev_lang      = -1;
+    static led_t   prev_led_state = {.raw = 255};
+    static uint8_t prev_mods      = 255;
+
+    uint8_t cur_layer = get_current_layer();
+    uint8_t cur_lang  = get_cur_lang(); // work on slave
+    led_t   led_state = host_keyboard_led_state();
+    led_state.caps_lock |= is_caps_word_on(); // work on slave
+    uint8_t mods = get_mods() | get_oneshot_mods();
+
+    if (prev_layer != cur_layer) {
+        lv_label_set_text(label_layer, get_layer_label(cur_layer));
+        prev_layer = cur_layer;
+        return;
+    }
+
+    if (prev_lang != cur_lang) {
+        lv_label_set_text(label_layout, get_layout_label(cur_lang));
+        prev_lang = cur_lang;
+        return;
+    }
+
+    static uint32_t modes_timer = 0;
+
+    if (led_state.raw != prev_led_state.raw || mods != 0) {
+        modes_timer = timer_read32();
+    }
+
+    if (led_state.raw != prev_led_state.raw) {
+        toggle_state(label_caps, LV_STATE_PRESSED, led_state.caps_lock);
+        toggle_state(label_num, LV_STATE_PRESSED, led_state.num_lock);
+        prev_led_state.raw = led_state.raw;
+        return;
+    }
+
+    if (mods != prev_mods) {
+        toggle_state(label_shift, LV_STATE_PRESSED, mods & MOD_MASK_SHIFT);
+        toggle_state(label_ctrl, LV_STATE_PRESSED, mods & MOD_MASK_CTRL);
+        toggle_state(label_alt, LV_STATE_PRESSED, mods & MOD_MASK_ALT);
+        toggle_state(label_gui, LV_STATE_PRESSED, mods & MOD_MASK_GUI);
+        prev_mods = mods;
+        return;
+    }
+
+    static bool prev_show_mods = false;
+    bool        show_mods      = modes_timer != 0 && timer_elapsed32(modes_timer) > 2000;
+
+    static bool prev_hid_active = false;
+    bool        hid_active      = is_hid_active();
+
+    if (show_mods != prev_show_mods) {
+        if (show_mods) {
+            lv_obj_add_flag(screen_home_mods, LV_OBJ_FLAG_HIDDEN);
+            if (hid_active) lv_obj_clear_flag(screen_home_media, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_clear_flag(screen_home_mods, LV_OBJ_FLAG_HIDDEN);
+            if (hid_active) lv_obj_add_flag(screen_home_media, LV_OBJ_FLAG_HIDDEN);
+        }
+        prev_show_mods = show_mods;
+        return;
+    }
+
+    if (prev_hid_active != hid_active) {
+        if (hid_active) {
+            lv_obj_clear_flag(label_time, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(label_product, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(screen_home_media, LV_OBJ_FLAG_HIDDEN);
+
+        } else {
+            lv_obj_add_flag(label_time, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(label_product, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(screen_home_media, LV_OBJ_FLAG_HIDDEN);
+        }
+        prev_hid_active = hid_active;
+        return;
+    }
+
+    hid_data_t *hid = get_hid_data();
+    if (hid->hid_changed) {
+        if (hid->time_changed) {
+            lv_label_set_text_fmt(label_time, "%02d:%02d", hid->hours, hid->minutes);
+            hid->time_changed = false;
+            return;
+        }
+        if (hid->media_title_changed) {
+            lv_label_set_text(label_hid_media_title, hid->media_title);
+            hid->media_title_changed = false;
+            return;
+        }
+        if (hid->media_artist_changed) {
+            lv_label_set_text(label_hid_media_artist, hid->media_artist);
+            hid->media_artist_changed = false;
+            return;
+        }
+        hid->hid_changed = false;
+        return;
+    }
 }
 
-void update_layout_hid(uint8_t layout) {
-    lv_label_set_text(label_hid_layout, get_layout_label(layout));
-}
-
-void update_layer_hid(uint8_t layer) {
-    lv_label_set_text(label_hid_layer, get_layer_label(layer));
-}
-
-const eh_screen_t eh_screen_hid = {
-    .init          = init_screen_hid,
-    .load          = load_screen_hid,
-    .update_hid    = update_hid_hid,
-    .update_layout = update_layout_hid,
-    .update_layer  = update_layer_hid,
-    .update_leds   = dummy_update_leds,
-    .update_mods   = dummy_update_mods,
-    .housekeep     = dummy_housekeep,
+const eh_screen_t eh_screen_home = {
+    .init      = screen_home_init,
+    .load      = screen_home_load,
+    .housekeep = screen_home_housekeep,
 };

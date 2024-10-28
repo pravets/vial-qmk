@@ -31,34 +31,14 @@ const char *get_layout_label(uint8_t layer);
 
 /* Common screens */
 
-void dummy_update_hid(hid_data_t *hid);
-
-void dummy_update_layout(uint8_t layout);
-
-void dummy_update_layer(uint8_t layer);
-
-void dummy_update_leds(led_t led_state);
-
-void dummy_update_mods(uint8_t layout);
-
-void dummy_housekeep(void);
-
 typedef struct {
     void (*init)(void);
     void (*load)(void);
-    void (*update_hid)(hid_data_t *hid);
-    void (*update_layout)(uint8_t layout);
-    void (*update_layer)(uint8_t layer);
-    void (*update_leds)(led_t led_state);
-    void (*update_mods)(uint8_t layout);
     void (*housekeep)(void);
 } eh_screen_t;
 
 extern const eh_screen_t eh_screen_splash;
 extern const eh_screen_t eh_screen_volume;
 extern const eh_screen_t eh_screen_home;
-extern const eh_screen_t eh_screen_hid;
-
-void load_screen(eh_screen_t screen);
 
 #endif

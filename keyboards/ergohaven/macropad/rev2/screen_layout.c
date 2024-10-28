@@ -6,15 +6,6 @@
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
-/* Screen layout */
-
-static lv_obj_t *screen_layout;
-
-static lv_obj_t *key_labels[15];
-static lv_obj_t *label_layer_small;
-
-static int update_layer_index = 0;
-
 static const char *PROGMEM LAYER_NAME[] = {
     "ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
 };
@@ -39,14 +30,21 @@ uint16_t get_encoder_keycode(int layer, int encoder, bool clockwise) {
     return keycode;
 }
 
-void init_screen_layout(void) {
+/* Screen layout */
+
+static lv_obj_t *screen_layout;
+
+static lv_obj_t *key_labels[15];
+static lv_obj_t *label_layer_small;
+
+void screen_layout_init(void) {
     screen_layout = lv_obj_create(NULL);
     lv_obj_add_style(screen_layout, &style_screen, 0);
     use_flex_column(screen_layout);
     lv_obj_set_scrollbar_mode(screen_layout, LV_SCROLLBAR_MODE_OFF);
 
     label_layer_small = lv_label_create(screen_layout);
-    lv_label_set_text(label_layer_small, "layer");
+    lv_label_set_text(label_layer_small, "");
     lv_obj_set_style_pad_top(label_layer_small, 25, 0);
     lv_obj_set_style_pad_bottom(label_layer_small, 25, 0);
     lv_obj_set_style_text_color(label_layer_small, accent_color_blue, 0);
@@ -81,6 +79,7 @@ void init_screen_layout(void) {
         lv_obj_center(key_labels[i]);
         lv_obj_set_style_text_font(key_labels[i], &ergohaven_symbols_20, LV_PART_MAIN);
         lv_obj_set_style_text_align(key_labels[i], LV_TEXT_ALIGN_CENTER, 0);
+        lv_label_set_text(key_labels[i], "");
 
         if (i >= 12) {
             lv_obj_set_style_border_opa(obj, 0, 0);
@@ -89,38 +88,41 @@ void init_screen_layout(void) {
     }
 }
 
-void load_screen_layout(void) {
+static uint8_t prev_layer         = 255;
+static int     update_label_index = 0;
+
+void screen_layout_load(void) {
+    prev_layer         = 255;
+    update_label_index = 0;
     lv_scr_load(screen_layout);
 }
 
-void update_layer_layout(uint8_t layer) {
-    lv_label_set_text(label_layer_small, get_layer_label(layer));
-    update_layer_index = 0;
-}
+void screen_layout_housekeep(void) {
+    uint8_t layer = get_current_layer();
+    if (layer != prev_layer) {
+        prev_layer = layer;
+        lv_label_set_text(label_layer_small, get_layer_label(layer));
+        update_label_index = 0;
+        return;
+    }
 
-void housekeep_screen_layout(void) {
-    if (update_layer_index >= 15) return;
-    uint8_t  layer   = get_current_layer();
+    if (update_label_index >= 15) return;
+
     uint16_t keycode = KC_TRANSPARENT;
-    if (update_layer_index < 12)
-        keycode = get_keycode(layer, update_layer_index / 3 + 1, update_layer_index % 3);
-    else if (update_layer_index == 13)
+    if (update_label_index < 12)
+        keycode = get_keycode(layer, update_label_index / 3 + 1, update_label_index % 3);
+    else if (update_label_index == 13)
         keycode = get_keycode(layer, 0, 2);
-    else if (update_layer_index == 12)
+    else if (update_label_index == 12)
         keycode = get_encoder_keycode(layer, 0, false);
-    else if (update_layer_index == 14)
+    else if (update_label_index == 14)
         keycode = get_encoder_keycode(layer, 0, true);
-    lv_label_set_text(key_labels[update_layer_index], keycode_to_str(keycode));
-    update_layer_index += 1;
+    lv_label_set_text(key_labels[update_label_index], keycode_to_str(keycode));
+    update_label_index += 1;
 }
 
 const eh_screen_t eh_screen_layout = {
-    .init          = init_screen_layout,
-    .load          = load_screen_layout,
-    .update_hid    = dummy_update_hid,
-    .update_layout = dummy_update_layout,
-    .update_layer  = update_layer_layout,
-    .update_leds   = dummy_update_leds,
-    .update_mods   = dummy_update_mods,
-    .housekeep     = housekeep_screen_layout,
+    .init      = screen_layout_init,
+    .load      = screen_layout_load,
+    .housekeep = screen_layout_housekeep,
 };
