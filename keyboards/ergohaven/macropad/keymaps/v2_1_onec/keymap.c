@@ -41,10 +41,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #ifdef ENCODER_MAP_ENABLE
 const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
-  [0] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
-  [1] = { ENCODER_CCW_CW(KC_PGDN, KC_PGUP) },
-  [2] = { ENCODER_CCW_CW(KC_WH_D, KC_WH_U) },
-  [3] = { ENCODER_CCW_CW(KC_VOLD, KC_VOLU) },
+  [0] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [1] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [2] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [3] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [4] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
 };
 #endif
 
@@ -110,28 +111,28 @@ void render_layer_state(void) {
     // oled_write_P(PSTR("\n"), false);
     switch (get_highest_layer(layer_state)) {
         case _BASE:
-            oled_write_P(PSTR("NUMPAD\n"), false);
+            oled_write_P(PSTR("ZERO\n"), false);
             break;
         case _LOWER:
-            oled_write_P(PSTR("ARROWS\n"), false);
+            oled_write_P(PSTR("ONE\n"), false);
             break;
         case _RAISE:
-            oled_write_P(PSTR("MOUSE\n"), false);
+            oled_write_P(PSTR("TWO\n"), false);
             break;
         case _ADJUST:
-            oled_write_P(PSTR("PC\n"), false);
+            oled_write_P(PSTR("THREE\n"), false);
             break;
         case _FOUR:
-            oled_write_P(PSTR("1C:CLIENT\n"), false);
+            oled_write_P(PSTR("FOUR\n"), false);
             break;
         case _FIVE:
-            oled_write_P(PSTR("1C:CONFIG\n"), false);
+            oled_write_P(PSTR("FIVE\n"), false);
             break;
         case _SIX:
-            oled_write_P(PSTR("EDT\n"), false);
+            oled_write_P(PSTR("SIX\n"), false);
             break;
         case _SEVEN:
-            oled_write_P(PSTR("GIT\n"), false);
+            oled_write_P(PSTR("SEVEN\n"), false);
             break;
         case _EIGHT:
             oled_write_P(PSTR("EIGHT\n"), false);
