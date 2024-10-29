@@ -377,6 +377,10 @@ const char *special_keycode_to_str(uint16_t keycode) {
             return LV_SYMBOL_COPY "\nCtl C";
         case C(KC_V):
             return LV_SYMBOL_PASTE "\nCtl V";
+        case GIT_CHECKOUT:
+            return "check\nout";
+        case GIT_FETCH:
+            return "fetch";
         default:
             return "";
     }

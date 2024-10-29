@@ -2,6 +2,7 @@
 #include "ergohaven.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  // NUMPAD
   [0] = LAYOUT(
                         KC_MUTE,
       KC_7, KC_8,       KC_9,
@@ -9,6 +10,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_1, KC_2,       KC_3,
       KC_0, LAYER_PREV, LAYER_NEXT
   ),
+  // ARROWS
   [1] = LAYOUT(
                         _______,
       KC_HOME, KC_INS,  KC_END,
@@ -16,6 +18,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_LEFT, KC_DOWN, KC_RIGHT,
       KC_DEL,  _______, _______
   ),
+  // MOUSE
   [2] = LAYOUT(
                         KC_BTN3,
       C(KC_X), C(KC_C), C(KC_V),
@@ -23,6 +26,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_MS_L, KC_MS_D, KC_MS_R,
       KC_PSCR, _______, _______
   ),
+  // PC
   [3] = LAYOUT(
                         KC_MUTE,
       KC_BRID, KC_CPNL, KC_BRIU,
@@ -30,12 +34,37 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       KC_MPRV, KC_MPLY, KC_MNXT,
       KC_CALC, _______, _______
   ),
+  // 1C:CLIENT
   [4] = LAYOUT(
-                        KC_MUTE,
-      KC_BRID, KC_CPNL, KC_BRIU,
-      KC_MYCM, KC_WSCH, KC_MAIL,
-      KC_MPRV, KC_MPLY, KC_MNXT,
-      KC_CALC, _______, _______
+                        _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______
+  ),
+  // 1C:CONFIG
+  [5] = LAYOUT(
+                        _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______
+  ),
+  // EDT
+  [6] = LAYOUT(
+                        _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______
+  ),
+  // GIT
+  [7] = LAYOUT(
+                        _______,
+      GIT_CHECKOUT, GIT_FETCH, _______,
+      _______, _______, _______,
+      _______, _______, _______,
+      _______, _______, _______
   ),
 };
 
@@ -46,6 +75,9 @@ const uint16_t PROGMEM encoder_map[][NUM_ENCODERS][NUM_DIRECTIONS] = {
   [2] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
   [3] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
   [4] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [5] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [6] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
+  [7] = { ENCODER_CCW_CW(LAYER_PREV, LAYER_NEXT) },
 };
 #endif
 
