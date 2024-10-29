@@ -99,6 +99,18 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
             layer_move(next_layer);
             return false;
 
+//        case GIT_FETCH:
+//            if (record->event.pressed) {
+//                SEND_STRING("git fetch ");
+//            }
+//            return false;
+
+        case GIT_CHECKOUT:
+            if (record->event.pressed) {
+                SEND_STRING("git checkout ");
+            }
+            return false;
+
         case LG_TOGGLE ... LG_END:
             return process_record_ruen(keycode, record);
     }

@@ -1,10 +1,10 @@
-        {"name": "",
-        "title": "Not using",
-        "shortName": ""
+        {"name": "GIT_CHECKOUT",
+        "title": "git checkout",
+        "shortName": "git\nfetch"
         },
-        {"name": "",
-        "title": "Not using",
-        "shortName": ""
+        {"name": "GIT_FETCH",
+        "title": "git fetch",
+        "shortName": "git\ncheckout"
         },
         {"name": "",
         "title": "Not using",
