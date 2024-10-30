@@ -13,10 +13,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ARROWS
   [1] = LAYOUT(
                         _______,
-      KC_HOME, KC_INS,  KC_END,
+      KC_INS,  KC_HOME, KC_PGUP,
+      KC_DEL,  KC_END,  KC_PGDN,
       PREVWRD, KC_UP,   NEXTWRD,
-      KC_LEFT, KC_DOWN, KC_RIGHT,
-      KC_DEL,  _______, _______
+      KC_LEFT, KC_DOWN, KC_RIGHT
   ),
   // MOUSE
   [2] = LAYOUT(
