@@ -2,12 +2,28 @@
 #include "ergohaven_keycode_str.h"
 #include "lvgl_helpers.h"
 #include "ergohaven.h"
+#include "layer_names.h"
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
 
 static const char *PROGMEM LAYER_NAME[] = {
-    "NUMPAD", "ARROWS", "MOUSE", "PC", "1C:CLIENT", "1C:CONFIG", "EDT", "GIT", "EIGHT", "NINE", "TEN", "ELEVEN", "TWELVE", "THIRTEEN", "FOURTEEN", "FIFTEEN",
+    LAYER_0_NAME,
+    LAYER_1_NAME,
+    LAYER_2_NAME,
+    LAYER_3_NAME,
+    LAYER_4_NAME,
+    LAYER_5_NAME,
+    LAYER_6_NAME,
+    LAYER_7_NAME,
+    LAYER_8_NAME,
+    LAYER_9_NAME,
+    LAYER_10_NAME,
+    LAYER_11_NAME,
+    LAYER_12_NAME,
+    LAYER_13_NAME,
+    LAYER_14_NAME,
+    LAYER_15_NAME,
 };
 
 const char *layer_upper_name(uint8_t layer) {
