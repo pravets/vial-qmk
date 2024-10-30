@@ -4,6 +4,7 @@
 #include "hid.h"
 #include "ergohaven.h"
 #include "ergohaven_symbols.h"
+#include "onec_symbols.h"
 #include "ergohaven_display.h"
 
 extern const eh_screen_t eh_screen_layout;

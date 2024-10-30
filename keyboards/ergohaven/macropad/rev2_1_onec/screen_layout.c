@@ -6,6 +6,7 @@
 
 LV_FONT_DECLARE(ergohaven_symbols_20);
 LV_FONT_DECLARE(ergohaven_symbols_28);
+LV_FONT_DECLARE(onec_symbols_20);
 
 static const char *PROGMEM LAYER_NAME[] = {
     LAYER_0_NAME,

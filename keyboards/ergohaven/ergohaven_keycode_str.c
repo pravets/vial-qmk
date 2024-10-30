@@ -3,6 +3,7 @@
 #include "keycodes.h"
 #include "ergohaven.h"
 #include "ergohaven_symbols.h"
+#include "onec_symbols.h"
 
 const char *basic_keycode_to_str(uint16_t keycode) {
     static char buf[16];
@@ -380,7 +381,7 @@ const char *special_keycode_to_str(uint16_t keycode) {
         case GIT_CHECKOUT:
             return "check\nout";
         case GIT_FETCH:
-            return "fetch";
+            return OC_SYMBOL_GIT_FETCH;//"fetch";
         default:
             return "";
     }

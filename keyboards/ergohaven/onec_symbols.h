@@ -1,0 +1,1 @@
+#define OC_SYMBOL_GIT_FETCH "\xEF\x80\x99"
