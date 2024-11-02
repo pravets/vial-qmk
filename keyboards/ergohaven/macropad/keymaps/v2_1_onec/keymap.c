@@ -45,11 +45,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // 1C:CONFIG
   [5] = LAYOUT(
-                        _______,
-      _______, _______, _______,
-      _______, _______, _______,
-      _______, _______, _______,
-      _______, _______, _______
+                        KC_NO,
+      ONEC_DEBUG_START, ONEC_DEBUG_STOP,    ONEC_DEBUG_RESTART,
+      KC_NO,            KC_NO,              KC_NO,
+      KC_NO,            KC_NO,              KC_NO,
+      KC_NO,            KC_NO,              KC_NO
   ),
   // EDT
   [6] = LAYOUT(
@@ -61,11 +61,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
   // GIT
   [7] = LAYOUT(
-                        _______,
-      GIT_CHECKOUT, GIT_FETCH, GIT_BRANCH,
-      _______, _______, _______,
-      _______, _______, _______,
-      _______, _______, _______
+                        KC_NO,
+      GIT_CHECKOUT, GIT_FETCH,  GIT_BRANCH,
+      KC_NO,        KC_NO,      KC_NO,
+      KC_NO,        KC_NO,      KC_NO,
+      KC_NO,        KC_NO,      KC_NO
   ),
 };
 

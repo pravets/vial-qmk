@@ -11,3 +11,52 @@
 "title": "git branch",
 "shortName": "git\nbranch"
 }
+,
+{"name": "ONEC_DEBUG_START",
+"title": "Запустить отладку 1С",
+"shortName": "1C dbg\nstart"
+},
+{"name": "ONEC_DEBUG_STOP",
+"title": "Остарновить отладку 1С",
+"shortName": "1C dbg\nstop"
+},
+{"name": "ONEC_DEBUG_RESTART",
+"title": "Перезапустить отладку 1С",
+"shortName": "1C dbg\nrestart"
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+},
+{"name": "",
+"title": "",
+"shortName": ""
+}

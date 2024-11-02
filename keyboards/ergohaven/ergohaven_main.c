@@ -108,13 +108,84 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
         case GIT_BRANCH:
             if (record->event.pressed) {
-                SEND_STRING("git checkout ");
+                SEND_STRING("git checkout -b ");
             }
             return false;
 
         case GIT_CHECKOUT:
             if (record->event.pressed) {
-                SEND_STRING("git checkout -b ");
+                SEND_STRING("git checkout ");
+            }
+            return false;
+        case ONEC_DEBUG_START:
+            if (record->event.pressed) {
+                SEND_STRING(SS_TAP(X_F5));
+            }
+            return false;
+
+        case ONEC_DEBUG_STOP:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LSFT(SS_TAP(X_F5)));
+            }
+            return false;
+
+        case ONEC_DEBUG_RESTART:
+            if (record->event.pressed) {
+                SEND_STRING(SS_LCTL(SS_LSFT(SS_TAP(X_F5))));
+            }
+            return false;
+
+        case ONEC_DEBUG_STEP_IN:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_DEBUG_STEP_OUT:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_DEBUG_STEP_OVER:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_DEBUG_STEP_TO_CURSOR:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_CFG_APPLY:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_RUN:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_CALC_EXPRESSION:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_BREAKPOINTS:
+            if (record->event.pressed) {
+                ;
+            }
+            return false;
+
+        case ONEC_SEACRH_BREAK:
+            if (record->event.pressed) {
+                ;
             }
             return false;
 

@@ -380,11 +380,35 @@ const char *special_keycode_to_str(uint16_t keycode) {
         case C(KC_V):
             return LV_SYMBOL_PASTE "\nCtl V";
         case GIT_CHECKOUT:
-            return OC_SYMBOL_GIT_CHECKOUT;//" "check\nout";
+            return OC_SYMBOL_GIT_CHECKOUT;
         case GIT_FETCH:
-            return OC_SYMBOL_GIT_FETCH;//"fetch";
+            return OC_SYMBOL_GIT_FETCH;
         case GIT_BRANCH:
-            return OC_SYMBOL_GIT_BRANCH;//"new\nbranch";
+            return OC_SYMBOL_GIT_BRANCH;
+        case ONEC_DEBUG_START:
+            return OC_SYMBOL_ONEC_DEBUG_START;
+        case ONEC_DEBUG_STOP:
+            return OC_SYMBOL_ONEC_DEBUG_STOP;
+        case ONEC_DEBUG_RESTART:
+            return OC_SYMBOL_ONEC_DEBUG_RESTART;
+        case ONEC_DEBUG_STEP_IN:
+            return OC_SYMBOL_ONEC_DEBUG_STEP_IN;
+        case ONEC_DEBUG_STEP_OUT:
+            return OC_SYMBOL_ONEC_DEBUG_STEP_OUT;
+        case ONEC_DEBUG_STEP_OVER:
+            return OC_SYMBOL_ONEC_DEBUG_STEP_OVER;
+        case ONEC_DEBUG_STEP_TO_CURSOR:
+            return OC_SYMBOL_ONEC_DEBUG_STEP_TO_CURSOR;
+        case ONEC_CFG_APPLY:
+            return OC_SYMBOL_ONEC_CFG_APPLY;
+        case ONEC_RUN:
+            return OC_SYMBOL_ONEC_RUN;
+        case ONEC_CALC_EXPRESSION:
+            return OC_SYMBOL_ONEC_CALC_EXPRESSION;
+        case ONEC_BREAKPOINTS:
+            return OC_SYMBOL_ONEC_BREAKPOINTS;
+        case ONEC_SEACRH_BREAK:
+            return OC_SYMBOL_ONEC_SEACRH_BREAK;
         default:
             return "";
     }
