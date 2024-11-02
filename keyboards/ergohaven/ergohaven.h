@@ -59,9 +59,7 @@ enum custom_keycodes {
     WNEXT,
     WPREV,
     LAYER_NEXT,
-    LAYER_PREV,
-    GIT_CHECKOUT,
-    GIT_FETCH,
+    LAYER_PREV
 };
 
 // 1st layer on the cycle

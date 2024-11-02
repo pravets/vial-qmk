@@ -1,5 +1,6 @@
 #include QMK_KEYBOARD_H
 #include "ergohaven.h"
+#include "onec.h"
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // NUMPAD
@@ -61,7 +62,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // GIT
   [7] = LAYOUT(
                         _______,
-      GIT_CHECKOUT, GIT_FETCH, _______,
+      GIT_CHECKOUT, GIT_FETCH, GIT_BRANCH,
       _______, _______, _______,
       _______, _______, _______,
       _______, _______, _______

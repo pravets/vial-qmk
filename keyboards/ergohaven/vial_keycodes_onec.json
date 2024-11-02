@@ -1,0 +1,13 @@
+{"name": "GIT_CHECKOUT",
+"title": "git checkout",
+"shortName": "git\nfetch"
+},
+{"name": "GIT_FETCH",
+"title": "git fetch",
+"shortName": "git\ncheckout"
+}
+,
+{"name": "GIT_BRANCH",
+"title": "git branch",
+"shortName": "git\nbranch"
+}

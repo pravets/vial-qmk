@@ -1,1 +1,3 @@
-#define OC_SYMBOL_GIT_FETCH "\xEF\x80\x99"
+#define OC_SYMBOL_GIT_FETCH "\xEF\x87\x92"
+#define OC_SYMBOL_GIT_BRANCH "\xEF\x87\x93"
+#define OC_SYMBOL_GIT_CHECKOUT "\xEF\xA2\xAC"

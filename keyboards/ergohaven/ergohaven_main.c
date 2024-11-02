@@ -4,6 +4,7 @@
 #include "ergohaven_rgb.h"
 #include "ergohaven_display.h"
 #include "hid.h"
+#include "onec.h"
 
 typedef union {
     uint32_t raw;
@@ -99,15 +100,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
             layer_move(next_layer);
             return false;
 
-//        case GIT_FETCH:
-//            if (record->event.pressed) {
-//                SEND_STRING("git fetch ");
-//            }
-//            return false;
+        case GIT_FETCH:
+            if (record->event.pressed) {
+                SEND_STRING("git fetch ");
+            }
+            return false;
+
+        case GIT_BRANCH:
+            if (record->event.pressed) {
+                SEND_STRING("git checkout ");
+            }
+            return false;
 
         case GIT_CHECKOUT:
             if (record->event.pressed) {
-                SEND_STRING("git checkout ");
+                SEND_STRING("git checkout -b ");
             }
             return false;
 
