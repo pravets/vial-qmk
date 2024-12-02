@@ -60,7 +60,7 @@ enum custom_keycodes {
     WPREV,
     LAYER_NEXT,
     LAYER_PREV,
-    EH_RESERV1,
+    EH_RESERV1
 };
 
 // 1st layer on the cycle

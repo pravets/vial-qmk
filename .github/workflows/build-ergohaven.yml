@@ -38,6 +38,7 @@ jobs:
         qmk compile -kb ergohaven/macropad/rev1 -km v1
         qmk compile -kb ergohaven/macropad/rev2 -km v2
         qmk compile -kb ergohaven/macropad/rev2 -km v2_ccw
+        qmk compile -kb ergohaven/macropad/rev2_1_onec -km v2_1_onec
         qmk compile -kb ergohaven/trackball -km v1
         qmk compile -kb ergohaven/k03pro/43mm -km v1
         qmk compile -kb ergohaven/k03pro/65mm -km v1
