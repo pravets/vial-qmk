@@ -60,7 +60,18 @@ enum custom_keycodes {
     WPREV,
     LAYER_NEXT,
     LAYER_PREV,
-    EH_RESERV1,
+    EH_RSRV1,
+
+    EH_RSRV2 = QK_KB + 51,
+    EH_RSRV3,
+    EH_RSRV4,
+    EH_RSRV5,
+    EH_RSRV6,
+    EH_RSRV7,
+    EH_RSRV8,
+    EH_RSRV9,
+    EH_RSRV10,
+    EH_RSRV11,
 };
 
 // 1st layer on the cycle

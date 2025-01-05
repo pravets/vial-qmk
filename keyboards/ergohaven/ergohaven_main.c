@@ -3,6 +3,7 @@
 #include "ergohaven_oled.h"
 #include "ergohaven_rgb.h"
 #include "ergohaven_display.h"
+#include "ergohaven_pointing.h"
 #include "hid.h"
 #include "version.h"
 
@@ -168,6 +169,10 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
     }
 
     if (!process_record_ruen(keycode, record)) return false;
+
+#ifdef EH_POINTING_KEYCODES
+    if (!process_record_pointing(keycode, record)) return false;
+#endif
 
     return process_record_user(keycode, record);
 }
