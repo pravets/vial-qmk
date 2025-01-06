@@ -17,14 +17,23 @@ typedef union {
 
 kb_config_t kb_config;
 
+void kb_config_update(kb_config_t new_config) {
+    if (new_config.raw != kb_config.raw) {
+        kb_config = new_config;
+        eeconfig_update_kb(kb_config.raw);
+    }
+}
+
 void kb_config_update_ruen_toggle_mode(uint8_t mode) {
-    kb_config.ruen_toggle_mode = mode;
-    eeconfig_update_kb(kb_config.raw);
+    kb_config_t new_config      = kb_config;
+    new_config.ruen_toggle_mode = mode;
+    kb_config_update(new_config);
 }
 
 void kb_config_update_ruen_mac_layout(bool mac_layout) {
-    kb_config.ruen_mac_layout = mac_layout;
-    eeconfig_update_kb(kb_config.raw);
+    kb_config_t new_config     = kb_config;
+    new_config.ruen_mac_layout = mac_layout;
+    kb_config_update(new_config);
 }
 
 #ifdef AUDIO_ENABLE
