@@ -20,6 +20,20 @@ void set_text_sens(int32_t s) {
     sens[POINTING_MODE_TEXT] = s;
 }
 
+static bool invert_scroll = false;
+
+void set_invert_scroll(bool invert) {
+    invert_scroll = invert;
+}
+
+static orientation_t orientation;
+
+void set_orientation(orientation_t o) {
+    orientation = o;
+}
+
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
+
 void set_automouse(uint8_t layer) {
     if (layer == 0) {
         set_auto_mouse_enable(false);
@@ -27,12 +41,6 @@ void set_automouse(uint8_t layer) {
         set_auto_mouse_layer(layer);
         set_auto_mouse_enable(true);
     }
-}
-
-static bool invert_scroll = false;
-
-void set_invert_scroll(bool invert) {
-    invert_scroll = invert;
 }
 
 bool is_mouse_active = false;
@@ -54,6 +62,74 @@ bool is_mouse_record_kb(uint16_t keycode, keyrecord_t *record) {
     return is_mouse_record_user(keycode, record);
 }
 
+#endif // POINTING_DEVICE_AUTO_MOUSE_ENABLE
+
+static bool led_blinks = true;
+
+void set_led_blinks(bool led) {
+    led_blinks = led;
+}
+
+bool get_led_blinks(void) {
+    return led_blinks;
+}
+
+void set_pointing_mode(pointing_mode_t mode) {
+    if (mode != pointing_mode) {
+        pointing_mode = mode;
+        if (led_blinks) {
+            switch (pointing_mode) {
+                case POINTING_MODE_NORMAL:
+                    register_code(KC_NUM_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
+                    wait_ms(20);
+                    register_code(KC_NUM_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
+                    break;
+                case POINTING_MODE_SNIPER:
+                    register_code(KC_SCROLL_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_SCROLL_LOCK);
+                    wait_ms(20);
+                    register_code(KC_SCROLL_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_SCROLL_LOCK);
+                    break;
+                case POINTING_MODE_SCROLL:
+                    register_code(KC_NUM_LOCK);
+                    register_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
+                    unregister_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(20);
+                    register_code(KC_NUM_LOCK);
+                    register_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_SCROLL_LOCK);
+                    unregister_code(KC_NUM_LOCK);
+                    send_keyboard_report();
+                    break;
+                case POINTING_MODE_TEXT:
+                    register_code(KC_CAPS_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_CAPS_LOCK);
+                    wait_ms(20);
+                    register_code(KC_CAPS_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_CAPS_LOCK);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
 bool process_record_pointing(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case EH_SCR:
@@ -66,26 +142,32 @@ bool process_record_pointing(uint16_t keycode, keyrecord_t *record) {
 
             if (record->event.pressed) {
                 prev_pointing_mode = pointing_mode;
-                pointing_mode      = NEW_MODE;
-                press_timer        = timer_read();
+                set_pointing_mode(NEW_MODE);
+                press_timer = timer_read();
             } else {
                 if (timer_elapsed(press_timer) < get_tapping_term(keycode, record)) {
                     if (prev_pointing_mode == NEW_MODE)
-                        pointing_mode = POINTING_MODE_NORMAL;
+                        set_pointing_mode(POINTING_MODE_NORMAL);
                     else
-                        pointing_mode = NEW_MODE;
+                        set_pointing_mode(NEW_MODE);
                 } else
-                    pointing_mode = POINTING_MODE_NORMAL;
+                    set_pointing_mode(POINTING_MODE_NORMAL);
             }
             return false;
         }
+
+        case EH_LED_BL:
+            if (record->event.pressed) led_blinks = !led_blinks;
+            return false;
     }
+
     return true;
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
+#ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     is_mouse_active = abs(mrpt.x) > 1 || abs(mrpt.y) > 1 || abs(mrpt.v) > 1 || abs(mrpt.h) > 1 || mrpt.buttons;
-
+#endif
     pointing_mode_t pmode = pointing_mode;
 
     // dealing with two finger gesture on touch
@@ -95,6 +177,26 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
         mrpt.y = mrpt.v;
         mrpt.h = 0;
         mrpt.v = 0;
+    }
+
+    switch (orientation) {
+        int8_t tmp;
+        case ROT_0:
+            break;
+        case ROT_270:
+            tmp    = mrpt.x;
+            mrpt.x = mrpt.y;
+            mrpt.y = -tmp;
+            break;
+        case ROT_180:
+            mrpt.x = -mrpt.x;
+            mrpt.y = -mrpt.y;
+            break;
+        case ROT_90:
+            tmp    = mrpt.x;
+            mrpt.x = -mrpt.y;
+            mrpt.y = tmp;
+            break;
     }
 
     int32_t divisor = sens[pmode];
@@ -124,6 +226,13 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
                 break;
 
             case POINTING_MODE_TEXT:
+                if (abs(shift_x) > abs(shift_y)) {
+                    shift_y       = 0;
+                    accumulated_v = 0;
+                } else if (abs(shift_x) < abs(shift_y)) {
+                    shift_x       = 0;
+                    accumulated_h = 0;
+                }
                 while (shift_x > 0) {
                     tap_code(KC_RIGHT);
                     shift_x--;

@@ -21,3 +21,5 @@ REPEAT_KEY_ENABLE = no
 AUTO_SHIFT_ENABLE = no
 QMK_SETTINGS = no
 DYNAMIC_KEYMAP_ENABLE = no
+
+SRC += keyboards/ergohaven/ergohaven_pointing.c

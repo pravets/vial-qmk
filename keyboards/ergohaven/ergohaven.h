@@ -71,7 +71,6 @@ enum custom_keycodes {
     EH_RSRV8,
     EH_RSRV9,
     EH_RSRV10,
-    EH_RSRV11,
 };
 
 // 1st layer on the cycle

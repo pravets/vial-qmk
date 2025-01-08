@@ -172,6 +172,9 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
                 send_string("RuEn layout: ");
                 send_string(get_ruen_mac_layout() ? "Mac\n" : "PC\n");
+
+                send_string("Led blinks: ");
+                send_string(get_led_blinks() ? "enabled\n" : "disabled\n");
             }
             return false;
         }
@@ -179,9 +182,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t* record) {
 
     if (!process_record_ruen(keycode, record)) return false;
 
-#ifdef EH_POINTING_KEYCODES
     if (!process_record_pointing(keycode, record)) return false;
-#endif
 
     return process_record_user(keycode, record);
 }

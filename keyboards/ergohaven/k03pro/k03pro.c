@@ -182,6 +182,7 @@ void keyboard_post_init_user(void) {
 
     vial_config.raw = via_get_layout_options();
     via_set_layout_options_kb(vial_config.raw);
+    set_led_blinks(false);
 
     transaction_register_rpc(RPC_SYNC_TOUCH, sync_touch);
     transaction_register_rpc(RPC_SYNC_DISPLAY, sync_display);
