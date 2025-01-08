@@ -104,23 +104,6 @@ bool is_touch_side(void) {
 }
 
 void housekeeping_task_user(void) {
-    {
-        static uint32_t t0 = 0;
-        uint32_t        dt = timer_elapsed32(t0);
-        if (t0 == 0) dt = 0;
-        t0 = timer_read32();
-
-        static uint32_t last_print = 0;
-        static uint32_t max_dt     = 0;
-
-        max_dt = MAX(max_dt, dt);
-        if (last_print == 0 || timer_elapsed32(last_print) > 1000) {
-            dprintf("housekeeping dt %ld\n", max_dt);
-            max_dt     = 0;
-            last_print = timer_read32();
-        }
-    }
-
     if (is_display_enabled() && is_display_side()) {
         display_housekeeping_task();
     }

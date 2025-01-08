@@ -241,6 +241,10 @@ void matrix_scan_kb(void) { // The very important timer.
 }
 
 void keyboard_post_init_kb(void) {
+#ifdef CONSOLE_ENABLE
+    debug_enable = true;
+#endif
+
     kb_config.raw = eeconfig_read_kb();
     set_ruen_toggle_mode(kb_config.ruen_toggle_mode);
     set_ruen_mac_layout(kb_config.ruen_mac_layout);
@@ -273,6 +277,28 @@ layer_state_t layer_state_set_kb(layer_state_t state) {
 }
 
 void housekeeping_task_kb(void) {
+#ifdef CONSOLE_ENABLE
+    {
+        static uint32_t t0 = 0;
+        uint32_t        dt = timer_elapsed32(t0);
+        if (t0 == 0) dt = 0;
+        t0 = timer_read32();
+
+        static uint32_t last_print = 0;
+        static uint32_t max_dt     = 0;
+        static uint32_t hz         = 0;
+
+        max_dt = MAX(max_dt, dt);
+        hz += 1;
+        if (last_print == 0 || timer_elapsed32(last_print) > 1000) {
+            dprintf("hz=%ld max_dt=%ld \n", hz, max_dt);
+            max_dt     = 0;
+            hz         = 0;
+            last_print = timer_read32();
+        }
+    }
+#endif
+
     uint32_t activity_elapsed = last_input_activity_elapsed();
 
     if (activity_elapsed > EH_TIMEOUT) {
