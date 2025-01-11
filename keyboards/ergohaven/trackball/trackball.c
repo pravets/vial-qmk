@@ -23,8 +23,6 @@ typedef union {
 
 static vial_config_t vial_config;
 
-static led_t leds;
-
 int get_dpi(uint8_t dpi_mode) {
     if (dpi_mode < ARRAY_SIZE(DPI_TABLE))
         return DPI_TABLE[dpi_mode];
@@ -32,7 +30,7 @@ int get_dpi(uint8_t dpi_mode) {
         return DPI_TABLE[0];
 }
 
-void update_settings(void) {
+void update_settings(led_t leds) {
     switch (vial_config.mode) {
         case NL_SCROLL_SL_SNIPER:
             if (leds.num_lock && !leds.scroll_lock)
@@ -74,9 +72,10 @@ void via_set_layout_options_kb(uint32_t value) {
     set_sniper_sens(SNIPER_TABLE[vial_config.sniper_mode]);
     set_text_sens(TEXT_TABLE[vial_config.text_mode]);
     set_orientation(vial_config.orientation);
-    update_settings();
+    update_settings(host_keyboard_led_state());
 }
 
+static led_t cur_leds;
 static led_t start_leds;
 static led_t end_leds;
 
@@ -88,8 +87,8 @@ bool led_update_user(led_t led_state) {
 
         t = timer_read32();
 
-        led_t changed = {.raw = leds.raw ^ led_state.raw};
-        leds          = led_state;
+        led_t changed = {.raw = cur_leds.raw ^ led_state.raw};
+        cur_leds      = led_state;
 
         if (elapsed > 100) {
             start_leds.raw = changed.raw;
@@ -103,8 +102,9 @@ bool led_update_user(led_t led_state) {
 
         dprintf("t=%lu num=%d scl=%d cps=%d\n", elapsed, changed.num_lock, changed.scroll_lock, changed.caps_lock);
         dprintf("start=%d end=%d\n", start_leds.raw, end_leds.raw);
-    } else
-        update_settings();
+    } else {
+        update_settings(led_state);
+    }
     return true;
 }
 
