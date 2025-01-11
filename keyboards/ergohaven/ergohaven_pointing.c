@@ -54,6 +54,9 @@ bool is_mouse_record_kb(uint16_t keycode, keyrecord_t *record) {
         case EH_SCR:
         case EH_SNP:
         case EH_TXT:
+        case EH_USR1:
+        case EH_USR2:
+        case EH_USR3:
             return true;
         default:
             return false;
@@ -98,6 +101,15 @@ void set_pointing_mode(pointing_mode_t mode) {
                     unregister_code(KC_SCROLL_LOCK);
                     break;
                 case POINTING_MODE_SCROLL:
+                    register_code(KC_CAPS_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_CAPS_LOCK);
+                    wait_ms(20);
+                    register_code(KC_CAPS_LOCK);
+                    wait_ms(10);
+                    unregister_code(KC_CAPS_LOCK);
+                    break;
+                case POINTING_MODE_TEXT:
                     register_code(KC_NUM_LOCK);
                     register_code(KC_SCROLL_LOCK);
                     send_keyboard_report();
@@ -114,14 +126,60 @@ void set_pointing_mode(pointing_mode_t mode) {
                     unregister_code(KC_NUM_LOCK);
                     send_keyboard_report();
                     break;
-                case POINTING_MODE_TEXT:
+                case POINTING_MODE_USR1:
+                    register_code(KC_NUM_LOCK);
                     register_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
                     wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
                     unregister_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
                     wait_ms(20);
+                    register_code(KC_NUM_LOCK);
                     register_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
                     wait_ms(10);
                     unregister_code(KC_CAPS_LOCK);
+                    unregister_code(KC_NUM_LOCK);
+                    send_keyboard_report();
+                    break;
+                case POINTING_MODE_USR2:
+                    register_code(KC_SCROLL_LOCK);
+                    register_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_SCROLL_LOCK);
+                    unregister_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
+                    wait_ms(20);
+                    register_code(KC_SCROLL_LOCK);
+                    register_code(KC_CAPS_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_CAPS_LOCK);
+                    unregister_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    break;
+                case POINTING_MODE_USR3:
+                    register_code(KC_NUM_LOCK);
+                    register_code(KC_CAPS_LOCK);
+                    register_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
+                    unregister_code(KC_CAPS_LOCK);
+                    unregister_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(20);
+                    register_code(KC_NUM_LOCK);
+                    register_code(KC_CAPS_LOCK);
+                    register_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
+                    wait_ms(10);
+                    unregister_code(KC_NUM_LOCK);
+                    unregister_code(KC_CAPS_LOCK);
+                    unregister_code(KC_SCROLL_LOCK);
+                    send_keyboard_report();
                     break;
                 default:
                     break;
@@ -134,7 +192,10 @@ bool process_record_pointing(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case EH_SCR:
         case EH_TXT:
-        case EH_SNP: {
+        case EH_SNP:
+        case EH_USR1:
+        case EH_USR2:
+        case EH_USR3: {
             static uint16_t        press_timer        = 0;
             static pointing_mode_t prev_pointing_mode = POINTING_MODE_NORMAL;
 
@@ -199,7 +260,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
             break;
     }
 
-    int32_t divisor = sens[pmode];
+    int32_t divisor = sens[MIN(pmode, POINTING_MODE_TEXT)];
 
     if (pmode != POINTING_MODE_NORMAL) {
         accumulated_h += mrpt.x;
@@ -214,6 +275,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
         mrpt.x = 0;
         mrpt.y = 0;
 
+        if (shift_x == 0 && shift_y == 0) return mrpt;
+
         switch (pmode) {
             case POINTING_MODE_SNIPER:
                 mrpt.x = shift_x;
@@ -226,6 +289,21 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
                 break;
 
             case POINTING_MODE_TEXT:
+            case POINTING_MODE_USR1:
+            case POINTING_MODE_USR2:
+            case POINTING_MODE_USR3: {
+#ifdef EH_TRACKBALL_LAYERS
+                uint8_t  layer    = pmode - POINTING_MODE_TEXT;
+                uint16_t kc_up    = dynamic_keymap_get_keycode(layer, 0, 0);
+                uint16_t kc_down  = dynamic_keymap_get_keycode(layer, 0, 1);
+                uint16_t kc_left  = dynamic_keymap_get_keycode(layer, 1, 0);
+                uint16_t kc_right = dynamic_keymap_get_keycode(layer, 1, 1);
+#else
+                uint16_t kc_up    = KC_UP;
+                uint16_t kc_down  = KC_DOWN;
+                uint16_t kc_left  = KC_LEFT;
+                uint16_t kc_right = KC_RIGHT;
+#endif
                 if (abs(shift_x) > abs(shift_y)) {
                     shift_y       = 0;
                     accumulated_v = 0;
@@ -233,23 +311,21 @@ report_mouse_t pointing_device_task_user(report_mouse_t mrpt) {
                     shift_x       = 0;
                     accumulated_h = 0;
                 }
-                while (shift_x > 0) {
-                    tap_code(KC_RIGHT);
-                    shift_x--;
-                }
-                while (shift_x < 0) {
-                    tap_code(KC_LEFT);
-                    shift_x++;
-                }
-                while (shift_y < 0) {
-                    tap_code(KC_UP);
-                    shift_y++;
-                }
-                while (shift_y > 0) {
-                    tap_code(KC_DOWN);
-                    shift_y--;
-                }
+
+                for (; shift_x > 0; shift_x--)
+                    tap_code16(kc_right);
+
+                for (; shift_x < 0; shift_x++)
+                    tap_code16(kc_left);
+
+                for (; shift_y < 0; shift_y++)
+                    tap_code16(kc_up);
+
+                for (; shift_y > 0; shift_y--)
+                    tap_code16(kc_down);
+
                 break;
+            }
 
             default:
             case POINTING_MODE_NORMAL:

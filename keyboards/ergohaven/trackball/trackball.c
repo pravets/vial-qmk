@@ -139,17 +139,29 @@ void housekeeping_task_user(void) {
                 set_pointing_mode(POINTING_MODE_NORMAL);
                 dprintf("set normal mode\n");
                 break;
-            case 2:
-                set_pointing_mode(POINTING_MODE_TEXT);
-                dprintf("set normal mode\n");
-                break;
             case 4:
                 set_pointing_mode(POINTING_MODE_SNIPER);
                 dprintf("set sniper mode\n");
                 break;
-            case 5:
+            case 2:
                 set_pointing_mode(POINTING_MODE_SCROLL);
                 dprintf("set scroll mode\n");
+                break;
+            case 5:
+                set_pointing_mode(POINTING_MODE_TEXT);
+                dprintf("set text mode\n");
+                break;
+            case 3:
+                set_pointing_mode(POINTING_MODE_USR1);
+                dprintf("set mode user 1\n");
+                break;
+            case 6:
+                set_pointing_mode(POINTING_MODE_USR2);
+                dprintf("set mode user 2\n");
+                break;
+            case 7:
+                set_pointing_mode(POINTING_MODE_USR3);
+                dprintf("set mode user 3\n");
                 break;
             default:
                 break;
